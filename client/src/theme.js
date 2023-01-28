@@ -1,5 +1,7 @@
-const colorToken = {
-    grey: {
+
+
+export const colorToken = {
+    greyColors: {
         0: "#ffffff",
         5: "#f1f2f3",
         10: "#e4e5e7",
@@ -23,7 +25,7 @@ const colorToken = {
         100: "#0c0c0e",
         900: "#000000"
     },
-    main: {
+    mainColors: {
         20: "#99ffee",
         60: "#00e6bf",
         65: "#00ccaa",
@@ -34,12 +36,88 @@ const colorToken = {
         90: "#006655",
         95: "#004d40",
         100: "#00332b"
-    }
+    },
 };
 
 
 /* Mui these settings */
 
+export const themeSettings = (mode) => {
+    return {
+        palette: {
+            mode: mode,
+            ...(mode === "dark") ? {
+                // dark mode
+                primary: {
+                    dark: colorToken.mainColors[85],
+                    main: colorToken.mainColors[80],
+                    light: colorToken.mainColors[70]
+                },
+                bg: {
+                    light: colorToken.greyColors[90],
+                    default: colorToken.greyColors[95]
+                },
+                txt: {
+                    dark: colorToken.greyColors[40],
+                    main: colorToken.greyColors[30],
+                    light: colorToken.greyColors[20]
+                },
+                neutral: {
+                    dark: colorToken.greyColors[40],
+                    mediumDark: colorToken.greyColors[35],
+                    main: colorToken.greyColors[30],
+                    mediumMain: colorToken.greyColors[25],
+                    light: colorToken.greyColors[20],
+                    mediumLight: colorToken.greyColors[15],
+                    white: colorToken.greyColors[5]
+                },
+                secondary: {
+                    dark: colorToken.greyColors[100],
+                    mediumDark: colorToken.greyColors[95],
+                    main: colorToken.greyColors[85],
+                    mediumMain: colorToken.greyColors[80],
+                    light: colorToken.greyColors[75],
+                    mediumLight: colorToken.greyColors[70]
+                },
 
+            }
+                :
+                {
+                    // light mode
+                    primary: {
+                        dark: colorToken.mainColors[85],
+                        main: colorToken.mainColors[80],
+                        light: colorToken.mainColors[70]
+                    },
+                    bg: {
+                        light: colorToken.greyColors[5],
+                        default: colorToken.greyColors[10]
+                    },
+                    txt: {
+                        dark: colorToken.greyColors[95],
+                        main: colorToken.greyColors[90],
+                        light: colorToken.greyColors[85]
+                    },
+                    neutral: {
+                        dark: colorToken.greyColors[90],
+                        mediumDark: colorToken.greyColors[85],
+                        main: colorToken.greyColors[80],
+                        mediumMain: colorToken.greyColors[75],
+                        light: colorToken.greyColors[70],
+                        mediumLight: colorToken.greyColors[65],
+                        white: colorToken.greyColors[50]
+                    },
+                    secondary: {
+                        dark: colorToken.greyColors[0],
+                        mediumDark: colorToken.greyColors[5],
+                        main: colorToken.greyColors[10],
+                        mediumMain: colorToken.greyColors[15],
+                        light: colorToken.greyColors[20],
+                        mediumLight: colorToken.greyColors[25]
+                    },
+                }
+        }
+    }
+}
 
 
