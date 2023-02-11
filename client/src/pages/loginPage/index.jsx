@@ -178,7 +178,7 @@ const LoginPage = () => {
                 </Button>
                 <FlexBetween my={2}>
                   <Link
-                    href="/signup"
+                    href="/register"
                     variant="body2"
                     fontSize={"1.6rem"}
                     // onClick={() => navigate("")}
