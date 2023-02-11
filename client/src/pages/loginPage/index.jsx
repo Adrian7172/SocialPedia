@@ -69,7 +69,6 @@ const LoginPage = () => {
       });
       const loggedIn = response.data;
       resetForm();
-      
       // set token and the user to redux
 
       navigate("/home");
@@ -178,7 +177,12 @@ const LoginPage = () => {
                   Sign In
                 </Button>
                 <FlexBetween my={2}>
-                  <Link href="#" variant="body2" fontSize={"1.6rem"}>
+                  <Link
+                    href="/signup"
+                    variant="body2"
+                    fontSize={"1.6rem"}
+                    // onClick={() => navigate("")}
+                  >
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </FlexBetween>
