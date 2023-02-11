@@ -1,5 +1,6 @@
 
 import LoginPage from "pages/loginPage";
+import HomePage from "pages/homePage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { useMemo } from "react";
@@ -19,6 +20,7 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={<LoginPage />} />
+            <Route path="/home" element={<HomePage />} />
           </Routes>
         </ThemeProvider>
       </Router>

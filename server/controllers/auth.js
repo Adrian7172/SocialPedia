@@ -46,6 +46,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
         try {
                 const { userId, password } = req.body;
+                console.log(userId)
 
                 // check valid userId
                 if (!userId.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/) && !userId.match(/^[0-9]{10}$/)) {
