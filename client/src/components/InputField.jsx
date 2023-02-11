@@ -8,7 +8,6 @@ const InputField = ({ label, ...props }) => {
   return (
     <TextField
       fullWidth
-      // margin="normal"
       label={label}
       {...field}
       {...props}
