@@ -125,6 +125,8 @@
 
 export const colorToken = {
     greyColors: {
+        0: "#ffffff",
+        5: "#f1f2f3",
         10: "#e4e5e7",
         15: "#d6d8db",
         20: "#c9cacf",
@@ -186,7 +188,7 @@ export const themeSettings = (mode) => {
                 },
                 neutral: {
                     dark: colorToken.greyColors[40],
-                    main: colorToken.greyColors[20],
+                    main: colorToken.greyColors[10],
                     light: colorToken.greyColors[5]
                 }
 
@@ -211,7 +213,7 @@ export const themeSettings = (mode) => {
                     neutral: {
                         dark: colorToken.greyColors[90],
                         main: colorToken.greyColors[80],
-                        light: colorToken.greyColors[60],
+                        light: colorToken.greyColors[80],
                         white: colorToken.greyColors[0]
                     },
                 }
