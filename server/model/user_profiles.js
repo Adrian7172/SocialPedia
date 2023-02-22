@@ -69,7 +69,11 @@ const userProfileSchema = new mongoose.Schema({
         locality: {
             type: String,
             default: null
-        }
+        },
+        city: {
+            type: String,
+            default: null
+        },
     },
     isUserIdVerified: {
         type: Boolean,

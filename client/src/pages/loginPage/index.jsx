@@ -57,7 +57,6 @@ const LoginPage = () => {
 
   /* Post data */
   const login = async (values, resetForm) => {
-    console.log(values);
     try {
       const response = await axios({
         method: "post",
@@ -181,7 +180,6 @@ const LoginPage = () => {
                     href="/register"
                     variant="body2"
                     fontSize={"1.6rem"}
-                    // onClick={() => navigate("")}
                   >
                     {"Don't have an account? Sign Up"}
                   </Link>

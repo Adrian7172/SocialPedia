@@ -1,5 +1,11 @@
 import React from "react";
-import { Box, Button, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import InputField from "components/InputField";
 import MultistepForm, { FormStep } from "components/MultistepForm";
@@ -8,10 +14,16 @@ import { setMode } from "state/authSlice";
 import MyDatePicker from "components/MyDatePicker";
 import * as Yup from "yup";
 import SelectInput from "components/SelectInput";
+import ImageDropzone from "components/ImageDropzone";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const RegisterPage = () => {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
+  const today = new Date();
+  const dispatch = useDispatch();
 
   /* FORM VALIDATION */
   const emailRegex =
@@ -20,6 +32,7 @@ const RegisterPage = () => {
   const stepOneValidation = Yup.object().shape({
     userId: Yup.string()
       .test("userId-regex", "Invalid email or phone number", (value) => {
+        value = value.trim();
         return emailRegex.test(value) || phoneRegex.test(value);
       })
       .required("Email or phone number is required"),
@@ -32,12 +45,58 @@ const RegisterPage = () => {
     firstName: Yup.string()
       .min(4, "First name should be of minimum 4 characters length")
       .required("First name is required"),
-    gender: Yup.string()
-      .required("Gender field is required"),
-    dateOfBirth: Yup.date().max(new Date(), "please enter a valid date").required("Date of birth is required"),
+    gender: Yup.string().required("Gender field is required"),
+    dateOfBirth: Yup.date()
+      .max(today, "please enter a valid date")
+      .required("Date of birth is required")
+      .test("age", "Age should be greater 12 years", (value) => {
+        const birthDate = new Date(value);
+        const ageInMs = today - birthDate;
+        const age = ageInMs / 31536000000;
+        return age >= 12;
+      }),
+  });
+  const stepTwoValidation = Yup.object().shape({
+    occupation: Yup.string()
+      .min(5, "Occupation should be of minimum 4 characters length")
+      .max(20, "Occupation should be of maximum 20 characters length"),
+    bio: Yup.string()
+      .min(10, "Bio should be of minimum 10 characters length")
+      .max(200, "Bio should be of maximum 200 characters length"),
+  });
+  const stepThreeValidation = Yup.object().shape({
+    locality: Yup.string()
+      .min(4, "locality should be of minimum 4 characters length")
+      .max(20, "locality should be of maximum 20 characters length"),
+    city: Yup.string()
+      .min(4, "city should be of minimum 4 characters length")
+      .max(20, "city should be of maximum 20 characters length"),
+    state: Yup.string()
+      .min(4, "state should be of minimum 4 characters length")
+      .max(20, "state should be of maximum 20 characters length"),
+    country: Yup.string()
+      .min(4, "country should be of minimum 4 characters length")
+      .max(20, "country should be of maximum 20 characters length"),
   });
 
-  const dispatch = useDispatch();
+  /* post data */
+  const register = async (values, resetForm) => {
+    try {
+      const response = await axios({
+        method: "post",
+        url: "http://localhost:3001/auth/register",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: values,
+      });
+      const registered = response.data;
+      resetForm();
+      navigate("/");
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   return (
     <FlexBetween width={"100vw"} height={"100vh"} flexDirection={"column"}>
@@ -65,10 +124,21 @@ const RegisterPage = () => {
             dateOfBirth: new Date(),
             gender: "",
             password: "",
+            profilePicture: {
+              fileName: "",
+              type: "",
+              size: "",
+            },
+            bio: "",
+            occupation: "",
+            locality: "",
+            city: "",
+            state: "",
+            country: "",
           }}
           onSubmit={(values, { resetForm }) => {
             alert(JSON.stringify(values, null, 2));
-            resetForm();
+            register(values, resetForm);
           }}
         >
           <Box
@@ -126,7 +196,7 @@ const RegisterPage = () => {
                 name={{ name: "dateOfBirth" }}
                 label="Date of birth"
                 required={true}
-                />
+              />
               <SelectInput
                 required
                 type="select"
@@ -136,64 +206,95 @@ const RegisterPage = () => {
               ></SelectInput>
             </FormStep>
           </Box>
-          {/* <Box
+          <Box
             sx={{
               maxWidth: smallScreen ? "100%" : "85%",
               margin: "0 auto",
             }}
           >
-          <FormStep
-              stepName="Signup"
-              onSubmit={() => console.log("step1 is submitted")}
-              validationSchema={stepOneValidation}
+            <FormStep
+              stepName="Profile"
+              onSubmit={() => console.log("step2 is submitted")}
+              validationSchema={stepTwoValidation}
             >
-              <FlexBetween gap={2}>
-                {" "}
+              <Typography
+                variant="h5"
+                sx={{
+                  width: "100%",
+                  ml: "1rem",
+                  color: theme.palette.neutral.main,
+                  mb: "1rem",
+                  fontWeight: "600",
+                }}
+              >
+                Upload profile picture
+              </Typography>
+              <ImageDropzone name="profilePicture" />
+              <FlexBetween
+                m={"2rem 0 2rem 0"}
+                width="100%"
+                height="auto"
+                flexDirection="column"
+              >
                 <InputField
-                  required
                   type="text"
-                  name="firstName"
-                  label="First name"
+                  name="occupation"
+                  label="Occupation"
                   margin="normal"
                 ></InputField>
                 <InputField
-                  required
+                  rows={3}
+                  multiline={true}
+                  name="bio"
                   type="text"
-                  name="lastName"
-                  label="Last name"
+                  label="Bio..."
                   margin="normal"
-                ></InputField>
+                />
               </FlexBetween>
-
+            </FormStep>
+          </Box>
+          <Box
+            sx={{
+              maxWidth: smallScreen ? "100%" : "85%",
+              margin: "0 auto",
+            }}
+          >
+            <FormStep
+              stepName="Profile"
+              onSubmit={() => console.log("step3 is submitted")}
+              validationSchema={stepThreeValidation}
+            >
+              <Typography variant="h5" my={2} ml={1} color="primary">
+                Where do you live?
+              </Typography>
               <InputField
-                required
                 type="text"
-                name="userId"
-                label="Email or Phone number"
+                name="locality"
+                label="Locality"
                 margin="normal"
               ></InputField>
               <InputField
-                required
-                name="password"
-                type="password"
-                label="Password"
+                type="text"
+                name="city"
+                label="City"
                 margin="normal"
               ></InputField>
-              <MyDatePicker
-                name={{ name: "dateOfBirth" }}
-                label="Date of birth"
-                required={true}
-              />
               <InputField
-                required
-                name="gender"
-                label={"Gender"}
+                type="text"
+                name="state"
+                label="State"
+                margin="normal"
+              ></InputField>
+              <InputField
+                type="text"
+                name="country"
+                label="Country"
                 margin="normal"
               ></InputField>
             </FormStep>
-          </Box> */}
+          </Box>
         </MultistepForm>
-        {/* <Button onClick={() => dispatch(setMode())}>Switch</Button> */}
+        <Button onClick={() => dispatch(setMode())}>Switch</Button>
       </Box>
     </FlexBetween>
   );

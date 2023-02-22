@@ -175,7 +175,7 @@ export const themeSettings = (mode) => {
                 primary: {
                     dark: colorToken.mainColors[85],
                     main: colorToken.mainColors[80],
-                    light: colorToken.mainColors[50]
+                    light: colorToken.mainColors[60]
                 },
                 background: {
                     light: colorToken.greyColors[90],
@@ -199,7 +199,7 @@ export const themeSettings = (mode) => {
                     primary: {
                         dark: colorToken.mainColors[85],
                         main: colorToken.mainColors[80],
-                        light: colorToken.mainColors[50]
+                        light: colorToken.mainColors[60]
                     },
                     background: {
                         light: colorToken.greyColors[5],
