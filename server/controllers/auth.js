@@ -12,13 +12,20 @@ const register = async (req, res) => {
                         userId,
                         password,
                         dateOfBirth,
-                        gender
+                        gender,
+                        picture,
+                        bio,
+                        occupation,
+                        locality,
+                        city,
+                        state,
+                        country
                 } = req.body;
 
                 // check if user exist
                 const user = await user_profiles.findOne({ userId: userId });
                 if (user != null) {
-                        res.status(400).json({ error: "user already exist!" });
+                        res.status(400).json({ message: "user already exist!" });
                 }
                 else {
                         const salt = await bcrypt.genSalt();
@@ -30,14 +37,23 @@ const register = async (req, res) => {
                                 userId: userId,
                                 password: passwordHashCode,
                                 dateOfBirth: dateOfBirth,
-                                gender: gender
+                                gender: gender,
+                                profilePicture: picture,
+                                bio: bio,
+                                occupation: occupation,
+                                address: {
+                                        locality: locality,
+                                        city: city,
+                                        state: state,
+                                        country: country
+                                }
                         })
 
                         const savedUser = await newUser.save();
                         res.status(201).json(savedUser);
                 }
         } catch (error) {
-                res.status(500).json({ error: error.message })
+                res.status(500).json({ message: error.message })
         }
 }
 
@@ -46,26 +62,26 @@ const register = async (req, res) => {
 const login = async (req, res) => {
         try {
                 const { userId, password } = req.body;
-                console.log(userId)
 
                 // check valid userId
                 if (!userId.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/) && !userId.match(/^[0-9]{10}$/)) {
-                        res.status(400).json({ data: "Invalid credential" })
+                        res.status(401).json({ message: "Invalid Email or phone number" })
                 }
 
                 const user = await user_profiles.findOne({ userId: userId });
-                if (!user) res.status(400).json({ data: "User doesn't exist..!" })
+                if (!user) res.status(401).json({ message: "User doesn't exist..!" })
 
                 const isMatch = await bcrypt.compare(password, user.password);
-                if (!isMatch) res.status(400).json({ data: "Wrong password" })
-
-                const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET_CODE);
-                //delete password
-                user.password = "null";
-                res.status(200).json({ token, user })
+                if (!isMatch) res.status(401).json({ message: "Wrong password" })
+                else {
+                        const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET_CODE);
+                        //delete password
+                        user.password = "null";
+                        res.status(200).json({ token, user })
+                }
 
         } catch (error) {
-                res.status(500).json({ error: error.message })
+                res.status(500).json({ message: error.message })
         }
 }
 

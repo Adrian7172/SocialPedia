@@ -17,6 +17,7 @@ import SelectInput from "components/SelectInput";
 import ImageDropzone from "components/ImageDropzone";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
   const theme = useTheme();
@@ -82,6 +83,23 @@ const RegisterPage = () => {
   /* post data */
   const register = async (values, resetForm) => {
     try {
+      let uploadedPicture = null;
+      if (values.picture) {
+        const formData = new FormData();
+        formData.append("picture", values.picture);
+        formData.append("userId", values.userId);
+
+        const uploadedResponse = await axios({
+          method: "post",
+          url: "http://localhost:3001/uploads",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          data: formData,
+        });
+        uploadedPicture = uploadedResponse.data;
+        values.picture = uploadedPicture._id;
+      }
       const response = await axios({
         method: "post",
         url: "http://localhost:3001/auth/register",
@@ -91,10 +109,14 @@ const RegisterPage = () => {
         data: values,
       });
       const registered = response.data;
+      toast("Registered successfully");
       resetForm();
       navigate("/");
     } catch (error) {
-      alert(error);
+      const msg = error.response.data.error
+        ? error.response.data.error
+        : "Something went wrong!!!";
+      toast(msg);
     }
   };
 
@@ -124,11 +146,7 @@ const RegisterPage = () => {
             dateOfBirth: new Date(),
             gender: "",
             password: "",
-            profilePicture: {
-              fileName: "",
-              type: "",
-              size: "",
-            },
+            picture: null,
             bio: "",
             occupation: "",
             locality: "",
@@ -137,7 +155,6 @@ const RegisterPage = () => {
             country: "",
           }}
           onSubmit={(values, { resetForm }) => {
-            alert(JSON.stringify(values, null, 2));
             register(values, resetForm);
           }}
         >
@@ -229,7 +246,7 @@ const RegisterPage = () => {
               >
                 Upload profile picture
               </Typography>
-              <ImageDropzone name="profilePicture" />
+              <ImageDropzone name="picture" />
               <FlexBetween
                 m={"2rem 0 2rem 0"}
                 width="100%"

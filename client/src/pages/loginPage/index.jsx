@@ -17,6 +17,7 @@ import React from "react";
 import * as Yup from "yup";
 import axios from "axios";
 import InputField from "components/InputField";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const theme = useTheme();
@@ -69,10 +70,12 @@ const LoginPage = () => {
       const loggedIn = response.data;
       resetForm();
       // set token and the user to redux
-
       navigate("/home");
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      const msg = error.response.data.message
+        ? error.response.data.message
+        : "Something went wrong!!!";
+      toast(msg);
     }
   };
 
@@ -176,11 +179,7 @@ const LoginPage = () => {
                   Sign In
                 </Button>
                 <FlexBetween my={2}>
-                  <Link
-                    href="/register"
-                    variant="body2"
-                    fontSize={"1.6rem"}
-                  >
+                  <Link href="/register" variant="body2" fontSize={"1.6rem"}>
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </FlexBetween>

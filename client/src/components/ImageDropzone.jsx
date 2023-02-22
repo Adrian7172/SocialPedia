@@ -35,17 +35,11 @@ const ImageDropzone = ({ name }) => {
       const file = files[0];
       const validationError = validateImage(file);
       if (validationError != null) {
-        console.log(validationError);
         setError(validationError);
         return;
       }
       setPreview(URL.createObjectURL(file));
-      setValue({
-        ...value,
-        fileName: file.name,
-        type: file.type,
-        size: file.size,
-      });
+      setValue(file);
     },
     [value]
   );

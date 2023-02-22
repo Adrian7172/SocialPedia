@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material";
 import { themeSettings } from "theme";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import RegisterPage from "pages/registerPage";
 
 function App() {
@@ -26,6 +28,7 @@ function App() {
           </Routes>
         </ThemeProvider>
       </Router>
+      <ToastContainer />
     </div>
   );
 }
