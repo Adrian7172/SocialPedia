@@ -38,7 +38,7 @@ const register = async (req, res) => {
                                 password: passwordHashCode,
                                 dateOfBirth: dateOfBirth,
                                 gender: gender,
-                                profilePicture: picture,
+                                profilePicture: null,
                                 bio: bio,
                                 occupation: occupation,
                                 address: {

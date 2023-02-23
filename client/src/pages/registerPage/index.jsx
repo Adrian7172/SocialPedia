@@ -83,23 +83,6 @@ const RegisterPage = () => {
   /* post data */
   const register = async (values, resetForm) => {
     try {
-      let uploadedPicture = null;
-      if (values.picture) {
-        const formData = new FormData();
-        formData.append("picture", values.picture);
-        formData.append("userId", values.userId);
-
-        const uploadedResponse = await axios({
-          method: "post",
-          url: "http://localhost:3001/uploads",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          data: formData,
-        });
-        uploadedPicture = uploadedResponse.data;
-        values.picture = uploadedPicture._id;
-      }
       const response = await axios({
         method: "post",
         url: "http://localhost:3001/auth/register",
@@ -109,12 +92,29 @@ const RegisterPage = () => {
         data: values,
       });
       const registered = response.data;
+      const uId = registered._id;
+
+      if (values.picture) {
+        const formData = new FormData();
+        formData.append("picture", values.picture);
+        formData.append("userId", uId);
+
+        await axios({
+          method: "post",
+          url: "http://localhost:3001/uploads",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          data: formData,
+        });
+      }
+
       toast("Registered successfully");
       resetForm();
       navigate("/");
     } catch (error) {
-      const msg = error.response.data.error
-        ? error.response.data.error
+      const msg = error.response.data.message
+        ? error.response.data.message
         : "Something went wrong!!!";
       toast(msg);
     }
