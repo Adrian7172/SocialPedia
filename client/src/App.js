@@ -1,33 +1,93 @@
 
 import LoginPage from "pages/loginPage";
 import HomePage from "pages/homePage";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  RouterProvider,
+} from "react-router-dom";
 
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
-import { CssBaseline, ThemeProvider } from "@mui/material";
+import { Container, CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material";
 import { themeSettings } from "theme";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RegisterPage from "pages/registerPage";
+import Navbar from "components/Navbar";
+import Leftbar from "components/Leftbar";
+import Rightbar from "components/Rightbar";
+import PeoplePage from "pages/peoplePage";
 
 function App() {
-  const mode = useSelector(state => state.mode);
+  const mode = useSelector(state => state.persistedReducer.mode);
+  const user = Boolean(useSelector(state => state.persistedReducer.token));
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
+
+
+  // layout
+  const Layout = () => {
+    return (
+      <React.Fragment>
+        <Navbar />
+        <Container maxWidth="lg">
+          <Stack gap={2} direction="row" alignItems="flex-start" mt="1rem">
+            <Leftbar />
+            <Outlet />
+            <Rightbar />
+          </Stack>
+        </Container>
+      </React.Fragment>
+    )
+  }
+
+
+  // protectedRoute
+  const ProtectedRoute = ({ children }) => {
+    if (!user && !(children.type.name === "LoginPage" || children.type.name === "RegisterPage")) {
+      return <Navigate to="/login" />
+    }
+    if (user && (children.type.name === "LoginPage" || children.type.name === "RegisterPage")) {
+      return <Navigate to="/" />
+    }
+    return children;
+  }
+
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      children: [
+        {
+          path: "/",
+          element: <ProtectedRoute><HomePage /></ProtectedRoute>,
+        }, {
+          path: "/peoples",
+          element: <ProtectedRoute><PeoplePage /></ProtectedRoute>,
+        }
+      ]
+
+    },
+    {
+      path: "/login",
+      element: <ProtectedRoute><LoginPage /></ProtectedRoute>
+    },
+    {
+      path: "/register",
+      element: <ProtectedRoute><RegisterPage /></ProtectedRoute>
+    },
+
+  ])
 
   return (
     <div className="App">
-      <Router>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<HomePage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Routes>
-        </ThemeProvider>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider router={router} />
+      </ThemeProvider>
       <ToastContainer />
     </div>
   );

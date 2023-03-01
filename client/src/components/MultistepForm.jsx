@@ -93,10 +93,9 @@ const MultistepForm = ({ children, initialValues, onSubmit }) => {
           {stepNumber === 0 && (
             <FlexBetween my={2}>
               <Link
-                href="/"
+                href="/login"
                 variant="body2"
                 fontSize={"1.6rem"}
-                // onClick={() => navigate("")}
               >
                 Already have an account? Sign in
               </Link>

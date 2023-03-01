@@ -187,9 +187,9 @@ export const themeSettings = (mode) => {
                     light: colorToken.greyColors[80]
                 },
                 neutral: {
-                    dark: colorToken.greyColors[40],
-                    main: colorToken.greyColors[10],
-                    light: colorToken.greyColors[5]
+                    dark: colorToken.greyColors[50],
+                    main: colorToken.greyColors[20],
+                    light: colorToken.greyColors[30]
                 }
 
             }
@@ -213,7 +213,7 @@ export const themeSettings = (mode) => {
                     neutral: {
                         dark: colorToken.greyColors[90],
                         main: colorToken.greyColors[80],
-                        light: colorToken.greyColors[80],
+                        light: colorToken.greyColors[50],
                         white: colorToken.greyColors[0]
                     },
                 }

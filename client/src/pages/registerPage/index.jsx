@@ -111,7 +111,7 @@ const RegisterPage = () => {
 
       toast("Registered successfully");
       resetForm();
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       const msg = error.response.data.message
         ? error.response.data.message
@@ -311,7 +311,6 @@ const RegisterPage = () => {
             </FormStep>
           </Box>
         </MultistepForm>
-        <Button onClick={() => dispatch(setMode())}>Switch</Button>
       </Box>
     </FlexBetween>
   );

@@ -9,12 +9,13 @@ import {
 import {
   Avatar,
   Box,
-  Button,
   Container,
   IconButton,
-  InputBase,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
+import Image from "mui-image";
+import logo from "../assets/logo2.png";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode } from "state/authSlice";
@@ -22,12 +23,17 @@ import AutoComplete from "./AutoComplete";
 import FlexBetween from "./FlexBetween";
 
 const Navbar = () => {
-  const theme = useTheme();
-  const dispatch = useDispatch();
-  const mode = useSelector((state) => state.mode);
-
   const boxRef = useRef(null);
   const [openSearch, setOpenSearch] = useState(false);
+
+  const theme = useTheme();
+  const dispatch = useDispatch();
+  const mode = useSelector((state) => state.persistedReducer.mode);
+
+  /*  BREAK POINTS */
+  const tabScreen = useMediaQuery("(max-width:765px)");
+  const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const verySmallScreen = useMediaQuery("(max-width: 320px)");
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -49,6 +55,9 @@ const Navbar = () => {
       height="5rem"
       borderColor={theme.palette.secondary.main}
       position="sticky"
+      top={0}
+      bgcolor={theme.palette.background.default}
+      zIndex={100}
     >
       <Container
         maxWidth="lg"
@@ -64,18 +73,29 @@ const Navbar = () => {
             width: "max-content",
           }}
         >
-          <Typography
-            fontWeight={700}
-            fontSize={"2.1rem"}
-            color={"primary"}
-            mt="0.3rem"
-          >
-            SocialPedia
-          </Typography>
+          {smallScreen ? (
+            <Image
+              src={logo}
+              width="5rem"
+              height="5rem"
+              sx={{
+                ml: "1rem",
+              }}
+            />
+          ) : (
+            <Typography
+              fontWeight={700}
+              fontSize={"2.1rem"}
+              color={"primary"}
+              mt="0.3rem"
+            >
+              SocialPedia
+            </Typography>
+          )}
           <Box
             ref={boxRef}
             position="relative"
-            bgcolor={theme.palette.secondary.light}
+            bgcolor={verySmallScreen ? null : theme.palette.secondary.light}
             borderRadius="1rem"
             sx={{
               position: "relative",
@@ -85,64 +105,74 @@ const Navbar = () => {
           >
             {openSearch ? (
               <Box
-                width="55rem"
+                width={tabScreen ? "100%" : "55rem"}
                 boxShadow={4}
                 borderRadius="1rem"
                 pl={1}
-                position="absolute"
+                position={tabScreen ? "fixed" : "absolute"}
+                zIndex={100}
+                left={tabScreen && 0}
+                right={tabScreen && 0}
                 bgcolor={theme.palette.secondary.light}
               >
                 <AutoComplete />
               </Box>
             ) : (
-              <Box
-                onClick={() => setOpenSearch(true)}
-                sx={{
-                  // maxWidth: "35rem",
-                  width: "30rem",
-                  height: "100%",
-                  cursor: "text",
-                  p: "0 1rem",
-                }}
-              >
-                <IconButton sx={{ pointerEvents: "none" }}>
-                  <Search />
-                </IconButton>
-                <Typography variant="p" sx={{ pointerEvents: "none" }}>
-                  Search...
-                </Typography>
-              </Box>
+              <>
+                <Box
+                  onClick={() => setOpenSearch(true)}
+                  sx={{
+                    maxWidth: "30rem",
+                    width: smallScreen ? "100%" : "35rem",
+                    height: "100%",
+                    cursor: "text",
+                    p: "0 1rem",
+                  }}
+                >
+                  <IconButton
+                    sx={{
+                      pointerEvents: "none",
+                      background:
+                        verySmallScreen && theme.palette.secondary.light,
+                    }}
+                  >
+                    <Search />
+                  </IconButton>
+                  {!verySmallScreen && (
+                    <Typography variant="p" sx={{ pointerEvents: "none" }}>
+                      Search...
+                    </Typography>
+                  )}
+                </Box>
+              </>
             )}
           </Box>
         </FlexBetween>
-        <FlexBetween height="5rem" gap="1rem">
-          <Box
+        <FlexBetween height="5rem" gap="1.2rem">
+          <IconButton
             onClick={() => dispatch(setMode())}
             sx={{
-              p: "0.8rem 1rem 0 1rem",
               cursor: "pointer",
             }}
           >
             {mode === "light" ? <DarkMode /> : <LightMode />}
-          </Box>
-          <Box
+          </IconButton>
+          <IconButton
             sx={{
-              p: "0.8rem 1rem 0 1rem",
               cursor: "pointer",
-              // color: theme.palette.primary.main,
+              display: tabScreen ? "none" : "flex",
             }}
           >
             <Message />
-          </Box>
-          <Box
+          </IconButton>
+          <IconButton
             sx={{
-              p: "0.8rem 1rem 0 1rem",
               cursor: "pointer",
-              // color: theme.palette.primary.main,
+              display: tabScreen ? "none" : "flex",
             }}
           >
             <Notifications />
-          </Box>
+          </IconButton>
 
           <Avatar sx={{ width: "3rem", height: "3rem", cursor: "pointer" }} />
         </FlexBetween>

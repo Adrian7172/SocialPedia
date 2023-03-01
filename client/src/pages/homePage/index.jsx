@@ -8,14 +8,7 @@ import React from "react";
 const HomePage = () => {
   return (
     <React.Fragment>
-      <Navbar />
-      <Container maxWidth="lg">
-        <Stack gap={2} direction="row" alignItems="flex-start" mt="1rem">
-          <Leftbar />
-          <Home />
-          <Rightbar />
-        </Stack>
-      </Container>
+      <Home />
     </React.Fragment>
   );
 };

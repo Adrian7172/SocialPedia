@@ -8,7 +8,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { Image } from "mui-image";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Form, FormikProvider, useFormik } from "formik";
 import FlexBetween from "components/FlexBetween";
@@ -18,11 +18,13 @@ import * as Yup from "yup";
 import axios from "axios";
 import InputField from "components/InputField";
 import { toast } from "react-toastify";
+import { setLogin } from "state/authSlice";
 
 const LoginPage = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const mode = useSelector((state) => state.mode);
+  const mode = useSelector((state) => state.persistedReducer.mode);
 
   /* BREAKPOINTS */
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -51,7 +53,6 @@ const LoginPage = () => {
     },
     validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
-      alert(JSON.stringify(values, null, 2));
       login(values, resetForm);
     },
   });
@@ -70,7 +71,8 @@ const LoginPage = () => {
       const loggedIn = response.data;
       resetForm();
       // set token and the user to redux
-      navigate("/home");
+      dispatch(setLogin(loggedIn));
+      navigate("/");
     } catch (error) {
       const msg = error.response.data.message
         ? error.response.data.message

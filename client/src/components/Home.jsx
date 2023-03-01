@@ -1,14 +1,29 @@
 import { useTheme } from "@emotion/react";
-import { Avatar, Box, TextField } from "@mui/material";
+import { EmojiEmotions, GifBox, PermMedia } from "@mui/icons-material";
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  TextField,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import React from "react";
 import CustDivider from "./CustDivider";
 import FlexBetween from "./FlexBetween";
+import UserPost from "./UserPost";
 import Wrapper from "./Wrapper";
 
 const Home = () => {
   const theme = useTheme();
+
+  /*  BREAK POINTS */
+  const tabScreen = useMediaQuery("(max-width:765px)");
+  const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
-    <FlexBetween flexDirection="column" flexGrow={3}>
+    <Box flexDirection="column" flex={5} pb="8rem">
       <Wrapper
         width="100%"
         display="flex"
@@ -17,6 +32,7 @@ const Home = () => {
         height="max-content"
       >
         <Box
+          display={smallScreen ? "none" : "flex"}
           flex={1}
           alignSelf="flex-start"
           sx={{
@@ -76,10 +92,93 @@ const Home = () => {
             />
           </Box>
           <CustDivider></CustDivider>
-          <Box>Emojis</Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
+            <IconButton
+              sx={{
+                bgcolor: !tabScreen && theme.palette.secondary.light,
+                borderRadius: !tabScreen ? "2rem" : "3rem",
+                padding: !tabScreen ? "0.7rem 1.5rem" : "1rem",
+                gap: !tabScreen && "0.5rem",
+                color: theme.palette.neutral.light,
+              }}
+            >
+              <PermMedia />
+              <Typography
+                sx={{
+                  display: tabScreen ? "none" : "block",
+                  fontSize: "1.4rem",
+                  color: theme.palette.neutral.light,
+                }}
+              >
+                image
+              </Typography>
+            </IconButton>
+            <IconButton
+              sx={{
+                bgcolor: !tabScreen && theme.palette.secondary.light,
+                borderRadius: !tabScreen ? "2rem" : "3rem",
+                padding: !tabScreen ? "0.7rem 1.5rem" : "1rem",
+                gap: !tabScreen && "0.5rem",
+                color: theme.palette.neutral.light,
+              }}
+            >
+              <GifBox />
+              <Typography
+                sx={{
+                  fontSize: "1.4rem",
+                  color: theme.palette.neutral.light,
+                  display: tabScreen ? "none" : "block",
+                }}
+              >
+                GIF
+              </Typography>
+            </IconButton>
+            <IconButton
+              sx={{
+                bgcolor: !tabScreen && theme.palette.secondary.light,
+                borderRadius: !tabScreen ? "2rem" : "3rem",
+                padding: !tabScreen ? "0.7rem 1.5rem" : "1rem",
+                gap: !tabScreen && "0.5rem",
+                color: theme.palette.neutral.light,
+              }}
+            >
+              <EmojiEmotions />
+              <Typography
+                sx={{
+                  fontSize: "1.4rem",
+                  color: theme.palette.neutral.light,
+                  display: tabScreen ? "none" : "block",
+                }}
+              >
+                Emojis
+              </Typography>
+            </IconButton>
+
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{
+                mt: tabScreen ? "0.5rem" : "0.2rem",
+                height: "3.3rem",
+                padding: "0 2rem",
+                borderRadius: "2rem",
+              }}
+            >
+              Post
+            </Button>
+          </Box>
         </Box>
       </Wrapper>
-    </FlexBetween>
+      <UserPost />
+      <UserPost />
+      <UserPost />
+      <UserPost />
+    </Box>
   );
 };
 
