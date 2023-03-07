@@ -1,6 +1,8 @@
-const user_profiles = require("../model/user_profiles");
+const user_profiles = require("../model/User_profiles");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const uploadPicture = require("./uploadPicture");
+const Images = require("../model/Images");
 
 
 /* REGISTER */
@@ -13,7 +15,6 @@ const register = async (req, res) => {
                         password,
                         dateOfBirth,
                         gender,
-                        picture,
                         bio,
                         occupation,
                         locality,
@@ -28,17 +29,22 @@ const register = async (req, res) => {
                         res.status(400).json({ message: "user already exist!" });
                 }
                 else {
+                        const pictureId = await uploadPicture(req, userId);
                         const salt = await bcrypt.genSalt();
                         const passwordHashCode = await bcrypt.hash(password, salt);
+                        const fullName = `${firstName} ${lastName}`;
+                        const age = getAge(dateOfBirth);
 
                         const newUser = new user_profiles({
                                 firstName: firstName,
                                 lastName: lastName,
+                                fullName: fullName,
                                 userId: userId,
                                 password: passwordHashCode,
                                 dateOfBirth: dateOfBirth,
+                                age: age,
                                 gender: gender,
-                                profilePicture: null,
+                                profilePicture: pictureId,
                                 bio: bio,
                                 occupation: occupation,
                                 address: {
@@ -53,9 +59,9 @@ const register = async (req, res) => {
                         res.status(201).json(savedUser);
                 }
         } catch (error) {
-                res.status(500).json({ message: error.message })
+                res.status(500).json({ message: error.message });
         }
-}
+};
 
 
 /* LOGIN */
@@ -71,13 +77,15 @@ const login = async (req, res) => {
                 const user = await user_profiles.findOne({ userId: userId });
                 if (!user) res.status(401).json({ message: "User doesn't exist..!" })
 
-                const isMatch = await bcrypt.compare(password, user.password);
+                const isMatch = await bcrypt.compare(password, user._doc.password);
                 if (!isMatch) res.status(401).json({ message: "Wrong password" })
                 else {
-                        const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET_CODE);
-                        //delete password
-                        user.password = "null";
-                        res.status(200).json({ token, user })
+                        let profilePic = await Images.findById({ _id: user._doc.profilePicture });
+                        user._doc.profilePicture = profilePic.imageData;
+                        // //delete password
+                        user._doc.password = null;
+                        const token = jwt.sign({ id: user._doc.userId }, process.env.JWT_SECRET_CODE);
+                        res.status(200).json({ token, user: user._doc })
                 }
 
         } catch (error) {
@@ -85,6 +93,21 @@ const login = async (req, res) => {
         }
 }
 
+//get age 
+function getAge(dateString) {
+        let today = new Date();
+        let birthDate = new Date(dateString);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        let m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+        }
+        return age;
+}
+
 
 
 module.exports = { register, login }
+
+
+

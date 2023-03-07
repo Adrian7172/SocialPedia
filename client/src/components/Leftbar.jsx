@@ -7,7 +7,7 @@ import {
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import FlexBetween from "./FlexBetween";
 import NavComponent from "./NavComponent";
 import Wrapper from "./Wrapper";
@@ -22,20 +22,87 @@ import logout from "../assets/check-out.png";
 
 const Leftbar = () => {
   const Nav = [
-    { name: "Home", icon: `${home}` },
-    { name: "Messages", icon: `${messages}` },
-    { name: "Notifications", icon: `${notifications}` },
-    { name: "Friends", icon: `${friends}` },
-    { name: "Groups", icon: `${groups}` },
-    { name: "Likes", icon: `${likes}` },
-    { name: "Saved posts", icon: `${savedPages}` },
-    { name: "Logout", icon: `${logout}` },
+    { id: "1", name: "Home", icon: `${home}`, navigate: "/" },
+    { id: "2", name: "Messages", icon: `${messages}`, navigate: "/mesaages" },
+    {
+      id: "3",
+      name: "Notifications",
+      icon: `${notifications}`,
+      navigate: "/notifications",
+    },
+    { id: "4", name: "Friends", icon: `${friends}`, navigate: "/friends" },
+    { id: "5", name: "Groups", icon: `${groups}`, navigate: "/groups" },
+    { id: "6", name: "Likes", icon: `${likes}`, navigate: "/likes" },
+    {
+      id: "7",
+      name: "Saved posts",
+      icon: `${savedPages}`,
+      navigate: "/savedposts",
+    },
+    { id: "8", name: "Logout", icon: `${logout}`, navigate: "/login" },
   ];
+  const MobNav = [
+    {
+      id: "1",
+      IconComponent: (
+        <Home
+          sx={{
+            width: "3rem",
+            height: "3rem",
+          }}
+        />
+      ),
+      navigate: "/",
+    },
+    {
+      id: "2",
+      IconComponent: (
+        <Message
+          sx={{
+            width: "3rem",
+            height: "3rem",
+          }}
+        />
+      ),
+      navigate: "/messages",
+    },
+    {
+      id: "3",
+      IconComponent: (
+        <Notifications
+          sx={{
+            width: "3rem",
+            height: "3rem",
+          }}
+        />
+      ),
+      navigate: "/notifications",
+    },
+    {
+      id: "4",
+      IconComponent: (
+        <People
+          sx={{
+            width: "3rem",
+            height: "3rem",
+          }}
+        />
+      ),
+      navigate: "/friends",
+    },
+  ];
+
+  const [active, setActive] = useState("1");
   const theme = useTheme();
 
   /*  BREAK POINTS */
   const tabScreen = useMediaQuery("(max-width:765px)");
-  const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const smallScreen = useMediaQuery("(max-width:650px)");
+
+  // useEffect
+  const handleActive = (id) => {
+    setActive(id);
+  };
 
   return (
     <>
@@ -59,12 +126,19 @@ const Leftbar = () => {
             },
           }}
         >
-          <Wrapper width="100%" height="100%"
-          overflow="auto" my="auto"
-          >
-            <FlexBetween p="2rem 0" flexDirection="column" gap={tabScreen ? 3.5 : 2}>
+          <Wrapper width="100%" height="100%" overflow="auto" my="auto">
+            <FlexBetween
+              p="2rem 0"
+              flexDirection="column"
+              gap={tabScreen ? 3.5 : 2}
+            >
               {Nav.map((comp) => (
-                <NavComponent {...comp} key={comp.icon} />
+                <NavComponent
+                  active={active}
+                  handleActive={handleActive}
+                  {...comp}
+                  key={comp.id}
+                />
               ))}
             </FlexBetween>
           </Wrapper>
@@ -89,39 +163,14 @@ const Leftbar = () => {
               justifyContent: "space-around",
             }}
           >
-            <IconButton size="small">
-              <Home
-                sx={{
-                  width: "3rem",
-                  height: "3rem",
-                  color: theme.palette.primary.main,
-                }}
+            {MobNav.map((comp) => (
+              <NavComponent
+                active={active}
+                handleActive={handleActive}
+                {...comp}
+                key={comp.id}
               />
-            </IconButton>
-            <IconButton size="small">
-              <Message
-                sx={{
-                  width: "3rem",
-                  height: "3rem",
-                }}
-              />
-            </IconButton>
-            <IconButton size="small">
-              <Notifications
-                sx={{
-                  width: "3rem",
-                  height: "3rem",
-                }}
-              />
-            </IconButton>
-            <IconButton size="small">
-              <People
-                sx={{
-                  width: "3rem",
-                  height: "3rem",
-                }}
-              />
-            </IconButton>
+            ))}
           </CardActions>
         </Box>
       )}

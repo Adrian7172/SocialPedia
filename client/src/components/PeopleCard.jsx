@@ -1,7 +1,5 @@
 import { useTheme } from "@emotion/react";
-import { PersonAdd } from "@mui/icons-material";
-import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
-import Image from "mui-image";
+import { Avatar, Box, Button, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
 import CustDivider from "./CustDivider";
 import FlexBetween from "./FlexBetween";
@@ -10,56 +8,80 @@ const PeopleCard = ({
   imageStyle,
   titleStyle,
   bioStyle,
+  addressStyle,
   addFriend = false,
   divider,
+  user = null,
 }) => {
   const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const verySmallScreen = useMediaQuery("(max-width: 320px)");
+
+  const fullName = user?.fullName;
+  const bio = trucateString(user?.bio);
+  const address = `${user?.address?.state}, ${user?.address?.country}`;
+  const profilePicture = user?.profilePicture?.imageData;
   return (
     <Box
       sx={{
         width: "100%",
-        p: "1rem",
+        p: smallScreen ? "0.4rem" : "1rem",
       }}
     >
-      <FlexBetween gap={2}>
-        <Avatar src={`${require("../assets/cover.jpg")}`} sx={imageStyle} />
+      <Box display="flex" gap={2}>
+        <Avatar src={profilePicture} sx={imageStyle} />
         <Box>
           <Typography variant="h5" sx={titleStyle}>
-            Aman Chauhan
+            {fullName}
           </Typography>
           <Typography
             lineHeight={1.3}
             color={theme.palette.neutral.light}
             sx={bioStyle}
           >
-            Lorem ipsum dolelit. Inventore, doloribus?
+            {bio}
+          </Typography>
+          <Typography lineHeight={1.3} sx={addressStyle}>
+            {address}
           </Typography>
         </Box>
         {addFriend && (
-          <FlexBetween gap={2} width="30rem">
-            <Button
-              sx={{
-                color: theme.palette.neutral.light,
-                textTransform: "none",
-                fontSize: "1.5rem",
-              }}
-            >
-              ignore
-            </Button>
+          <FlexBetween gap={2} width="max-content" ml="auto">
+            {!smallScreen && (
+              <Button
+                sx={{
+                  color: theme.palette.neutral.light,
+                  textTransform: "none",
+                  fontSize: "1.5rem",
+                }}
+              >
+                ignore
+              </Button>
+            )}
             <Button
               variant="contained"
               sx={{
                 textTransform: "none",
+                whiteSpace: "nowrap",
+                fontSize: smallScreen ? "1.2rem" : "1.5rem",
+                p: "0.4rem 0.6rem",
               }}
             >
               Add friend
             </Button>
           </FlexBetween>
         )}
-      </FlexBetween>
+      </Box>
       {divider && <CustDivider />}
     </Box>
   );
 };
 
 export default PeopleCard;
+
+function trucateString(str) {
+  if (str?.length > 40) {
+    str = str.slice(0, 37) + "...";
+  }
+  return str;
+}

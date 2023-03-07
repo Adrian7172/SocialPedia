@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,22 +9,24 @@ import {
 import FlexBetween from "components/FlexBetween";
 import InputField from "components/InputField";
 import MultistepForm, { FormStep } from "components/MultistepForm";
-import { useDispatch, useSelector } from "react-redux";
-import { setMode } from "state/authSlice";
 import MyDatePicker from "components/MyDatePicker";
 import * as Yup from "yup";
 import SelectInput from "components/SelectInput";
 import ImageDropzone from "components/ImageDropzone";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { useUserRegisterMutation } from "../../state/api/authApi";
+import Image from "mui-image";
 
 const RegisterPage = () => {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const today = new Date();
-  const dispatch = useDispatch();
+
+  // rtk query hook
+  const [registerUser, { isLoading, isError, error }] =
+    useUserRegisterMutation();
 
   /* FORM VALIDATION */
   const emailRegex =
@@ -83,35 +85,19 @@ const RegisterPage = () => {
   /* post data */
   const register = async (values, resetForm) => {
     try {
-      const response = await axios({
-        method: "post",
-        url: "http://localhost:3001/auth/register",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: values,
-      });
-      const registered = response.data;
-      const uId = registered._id;
-
-      if (values.picture) {
-        const formData = new FormData();
-        formData.append("picture", values.picture);
-        formData.append("userId", uId);
-
-        await axios({
-          method: "post",
-          url: "http://localhost:3001/uploads",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          data: formData,
-        });
+      let formData = new FormData();
+      for (let value in values) {
+        formData.append(value, values[value]);
       }
 
-      toast("Registered successfully");
-      resetForm();
-      navigate("/login");
+      const registeredUser = await registerUser(formData);
+      if (isError || registeredUser.error) {
+        toast(error || registeredUser.error.data.message);
+      } else {
+        toast("Registered successfully");
+        resetForm();
+        navigate("/login");
+      }
     } catch (error) {
       const msg = error.response.data.message
         ? error.response.data.message

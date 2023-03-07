@@ -2,14 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const userRoute = require("./routes/userRoute")
 const authRoute = require("./routes/auth.js");
-const multer = require("multer");
-const uploadPicture = require("./controllers/uploadPicture.js");
-
+const postRoute = require("./routes/postRoute")
 
 const app = express();
 dotenv.config();
-app.use
 
 /*  MIDDLEWARES  */
 app.use(cors());
@@ -17,22 +15,9 @@ app.use(express.json());
 
 
 /* ROUTES */
+app.use(userRoute)
 app.use("/auth", authRoute);
-
-/* Multer setup */
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'assets/') 
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname)
-    }
-});
-
-const upload = multer({ storage: storage });
-
-/* Routes with files */
-app.post("/uploads", upload.single("picture"), uploadPicture);
+app.use("/user", postRoute);
 
 /* MONGODB SETUP */
 const PORT = process.env.PORT || 6001;

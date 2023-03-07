@@ -16,8 +16,8 @@ const SelectInput = ({ name, label, required, margin }) => {
         error={meta.touched && Boolean(meta.error) && submitCount > 0}
         helperText={meta.touched && submitCount > 0 ? meta.error : null}
       >
-        <MenuItem value="male">Male</MenuItem>
-        <MenuItem value="memale">Female</MenuItem>
+        <MenuItem value="Male">Male</MenuItem>
+        <MenuItem value="Female">Female</MenuItem>
         <MenuItem value="Other">Other</MenuItem>
       </Select>
     </FormControl>

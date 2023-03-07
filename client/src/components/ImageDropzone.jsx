@@ -20,12 +20,14 @@ const validateImage = (file) => {
 };
 
 const ImageDropzone = ({ name }) => {
-  const [preview, setPreview] = useState(null);
-  const [error, setError] = useState(null);
-
   const [field, meta, helpers] = useField(name);
   const { value } = meta;
   const { setValue } = helpers;
+
+  const [preview, setPreview] = useState(value ? URL.createObjectURL(value) : null);
+  const [error, setError] = useState(null);
+
+  
   const theme = useTheme();
 
   const onDrop = useCallback(

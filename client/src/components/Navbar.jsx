@@ -2,15 +2,22 @@ import { useTheme } from "@emotion/react";
 import {
   DarkMode,
   LightMode,
+  Logout,
   Message,
   Notifications,
   Search,
+  Settings,
 } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   Container,
+  Divider,
   IconButton,
+  Link,
+  ListItemIcon,
+  Menu,
+  MenuItem,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -21,14 +28,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode } from "state/authSlice";
 import AutoComplete from "./AutoComplete";
 import FlexBetween from "./FlexBetween";
+import { useGetAllUserQuery } from "state/api/userApi";
 
 const Navbar = () => {
   const boxRef = useRef(null);
   const [openSearch, setOpenSearch] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const theme = useTheme();
   const dispatch = useDispatch();
-  const mode = useSelector((state) => state.persistedReducer.mode);
+  const mode = useSelector((state) => state.persistedReducer.user.mode);
+  const token = useSelector((state) => state.persistedReducer.user.token);
+  const user = useSelector((state) => state.persistedReducer.user.userData);
+
+  /* get all user for search */
+  const {
+    data: allUser,
+  } = useGetAllUserQuery(token);
+
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   /*  BREAK POINTS */
   const tabScreen = useMediaQuery("(max-width:765px)");
@@ -73,25 +97,32 @@ const Navbar = () => {
             width: "max-content",
           }}
         >
-          {smallScreen ? (
-            <Image
-              src={logo}
-              width="5rem"
-              height="5rem"
-              sx={{
-                ml: "1rem",
-              }}
-            />
-          ) : (
-            <Typography
-              fontWeight={700}
-              fontSize={"2.1rem"}
-              color={"primary"}
-              mt="0.3rem"
-            >
-              SocialPedia
-            </Typography>
-          )}
+          <Link
+            href={"/"}
+            sx={{
+              textDecoration: "none",
+            }}
+          >
+            {smallScreen ? (
+              <Image
+                src={logo}
+                width="5rem"
+                height="5rem"
+                sx={{
+                  ml: "1rem",
+                }}
+              />
+            ) : (
+              <Typography
+                fontWeight={700}
+                fontSize={"2.1rem"}
+                color={"primary"}
+                mt="0.3rem"
+              >
+                SocialPedia
+              </Typography>
+            )}
+          </Link>
           <Box
             ref={boxRef}
             position="relative"
@@ -115,7 +146,7 @@ const Navbar = () => {
                 right={tabScreen && 0}
                 bgcolor={theme.palette.secondary.light}
               >
-                <AutoComplete />
+                <AutoComplete users={allUser} />
               </Box>
             ) : (
               <>
@@ -173,8 +204,71 @@ const Navbar = () => {
           >
             <Notifications />
           </IconButton>
-
-          <Avatar sx={{ width: "3rem", height: "3rem", cursor: "pointer" }} />
+          <IconButton
+            onClick={handleClick}
+            size="small"
+            sx={{ ml: 2 }}
+            aria-controls={open ? "account-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+          >
+            <Avatar
+              src={user?.profilePicture}
+              sx={{ width: "3rem", height: "3rem", cursor: "pointer" }}
+            />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            id="account-menu"
+            open={open}
+            onClose={handleClose}
+            onClick={handleClose}
+            PaperProps={{
+              elevation: 0,
+              sx: {
+                overflow: "visible",
+                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                mt: 1.5,
+                "& .MuiAvatar-root": {
+                  width: 32,
+                  height: 32,
+                  ml: -0.5,
+                  mr: 1,
+                },
+                "&:before": {
+                  content: '""',
+                  display: "block",
+                  position: "absolute",
+                  top: 0,
+                  right: 14,
+                  width: 10,
+                  height: 10,
+                  bgcolor: "background.paper",
+                  transform: "translateY(-50%) rotate(45deg)",
+                  zIndex: 0,
+                },
+              },
+            }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          >
+            <MenuItem>
+              <Avatar /> My Profile
+            </MenuItem>
+            <Divider />
+            <MenuItem>
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              Settings
+            </MenuItem>
+            <MenuItem>
+              <ListItemIcon>
+                <Logout fontSize="small" />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </Menu>
         </FlexBetween>
       </Container>
     </FlexBetween>

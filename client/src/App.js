@@ -8,9 +8,9 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-import React, { useMemo } from "react";
+import React, { Suspense, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Container, CssBaseline, Stack, ThemeProvider } from "@mui/material";
+import { Box, Container, CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material";
 import { themeSettings } from "theme";
 import { ToastContainer } from 'react-toastify';
@@ -20,10 +20,15 @@ import Navbar from "components/Navbar";
 import Leftbar from "components/Leftbar";
 import Rightbar from "components/Rightbar";
 import PeoplePage from "pages/peoplePage";
+import FriendsPage from "pages/friendsPage";
+// import ProfilePage from "pages/profilePage";
+import SearchResult from "components/SearchResult";
+
+const ProfilePage = React.lazy(() => import("pages/profilePage"))
 
 function App() {
-  const mode = useSelector(state => state.persistedReducer.mode);
-  const user = Boolean(useSelector(state => state.persistedReducer.token));
+  const mode = useSelector(state => state.persistedReducer.user.mode);
+  const user = useSelector(state => Boolean(state.persistedReducer.user.token));
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
 
 
@@ -67,6 +72,18 @@ function App() {
         }, {
           path: "/peoples",
           element: <ProtectedRoute><PeoplePage /></ProtectedRoute>,
+        }
+        , {
+          path: "/friends",
+          element: <ProtectedRoute><FriendsPage /></ProtectedRoute>,
+        }
+        , {
+          path: "/profile/:id",
+          element: <Suspense fallback={<Box flex={8}>Loading...</Box>}><ProtectedRoute><ProfilePage /></ProtectedRoute></Suspense>,
+        }
+        , {
+          path: "/search/:name",
+          element: <ProtectedRoute><SearchResult /></ProtectedRoute>,
         }
       ]
 

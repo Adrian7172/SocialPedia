@@ -15,16 +15,18 @@ import FlexBetween from "components/FlexBetween";
 import img from "assets/logo2.png";
 import React from "react";
 import * as Yup from "yup";
-import axios from "axios";
 import InputField from "components/InputField";
 import { toast } from "react-toastify";
 import { setLogin } from "state/authSlice";
+import { useUserLoginMutation } from "state/api/authApi";
 
 const LoginPage = () => {
+  const [loginUser, { isLoading, isError, error }] = useUserLoginMutation();
+
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const mode = useSelector((state) => state.persistedReducer.mode);
+  const mode = useSelector((state) => state.persistedReducer.user.mode);
 
   /* BREAKPOINTS */
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -60,19 +62,17 @@ const LoginPage = () => {
   /* Post data */
   const login = async (values, resetForm) => {
     try {
-      const response = await axios({
-        method: "post",
-        url: "http://localhost:3001/auth/login",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: values,
-      });
-      const loggedIn = response.data;
-      resetForm();
-      // set token and the user to redux
-      dispatch(setLogin(loggedIn));
-      navigate("/");
+      const loggedIn = await loginUser(values);
+      if (isError || loggedIn.error) {
+        toast(error || loggedIn.error.data.message);
+      } else {
+        resetForm();
+        // set token and the user to redux
+        const token = "bearer " + loggedIn.data.token;
+        const user = loggedIn.data.user;
+        dispatch(setLogin({ token, user }));
+        navigate("/");
+      }
     } catch (error) {
       const msg = error.response.data.message
         ? error.response.data.message

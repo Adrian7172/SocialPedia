@@ -1,15 +1,55 @@
-import { useTheme } from "@emotion/react";
-import { Avatar, Box, Link, Typography, useMediaQuery } from "@mui/material";
-import Image from "mui-image";
 import React from "react";
+import { useTheme } from "@emotion/react";
+import {
+  Avatar,
+  Box,
+  Divider,
+  Link,
+  Skeleton,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import Image from "mui-image";
 import FlexBetween from "./FlexBetween";
 import Wrapper from "./Wrapper";
 import cover from "../assets/cover.jpg";
 import PeopleCard from "./PeopleCard";
+import { useSelector } from "react-redux";
+import { useGetAllUserQuery } from "state/api/userApi";
 
 function Rightbar() {
   const theme = useTheme();
+  const user = useSelector((state) => state.persistedReducer.user.userData);
+  const token = useSelector((state) => state.persistedReducer.user.token);
+
+  const { data: allUser, isLoading } = useGetAllUserQuery(token);
+  const users = allUser?.slice(0, 3);
   const mediumScreen = useMediaQuery("(max-width: 1000px)");
+
+  // skelton
+  const skelton = Array.from({ length: 3 }, (_, index) => (
+    <Box
+      key={index}
+      sx={{
+        p: "1rem",
+      }}
+    >
+      <Box display="flex" gap={2}>
+        <Skeleton
+          variant="circular"
+          width="3.5rem"
+          height="3.5rem"
+          sx={{
+            mb: "0.5rem",
+          }}
+        />{" "}
+        <Box width="60%">
+          <Skeleton variant="text" sx={{ fontSize: "1.5rem", width: "60%" }} />
+        </Box>
+      </Box>
+      <Skeleton variant="text" sx={{ fontSize: "1.5rem", width: "100%" }} />
+    </Box>
+  ));
   return (
     <>
       <Box
@@ -21,7 +61,6 @@ function Rightbar() {
           top: "6.1rem",
           overflowY: "scroll",
           height: "calc(100vh - 10rem)",
-
           "&::-webkit-scrollbar": {
             display: "none",
           },
@@ -37,7 +76,6 @@ function Rightbar() {
             border: "1px solid",
             borderColor: theme.palette.secondary.main,
             borderRadius: "1rem",
-            cursor: "pointer",
           }}
         >
           <FlexBetween
@@ -57,36 +95,105 @@ function Rightbar() {
               }}
             />
             <Avatar
+              src={user?.profilePicture}
               sx={{
-                mt: "-3rem",
-                width: "6rem",
-                height: "6rem",
+                border: "0.25rem solid",
+                borderColor: theme.palette.background.default,
+                mt: "-3.5rem",
+                width: "7rem",
+                height: "7rem",
               }}
             />
           </FlexBetween>
           <FlexBetween flexDirection="column" mb={2}>
-            <Typography
+            <Link
+              href={`/profile/${user?._id}`}
               variant="p"
               sx={{
-                mt: "1rem",
+                my: "0.5rem",
                 fontWeight: "500",
+                color: theme.palette.neutral.main,
+                textDecoration: "none",
+                "&:hover": {
+                  color: theme.palette.primary.main,
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                },
               }}
             >
-              Aman Chauhan
-            </Typography>
+              {user?.fullName}
+            </Link>
+            <Divider width="100%" />
             <Typography
               lineHeight={1.3}
               color={theme.palette.neutral.light}
               sx={{
+                my: "1rem",
                 fontSize: "1.1rem",
                 textAlign: "center",
-                m: "0",
-                p: "0",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Inventore, doloribus?
+              {user?.bio}
             </Typography>
+            <Divider width="100%" />
+            <Box
+              width="70%"
+              pt="1rem"
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography
+                sx={{
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  color: theme.palette.neutral.main,
+                }}
+              >
+                views{" "}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  color: theme.palette.neutral.light,
+                }}
+              >
+                2270{" "}
+              </Typography>
+            </Box>
+            <Box
+              width="70%"
+              pt="1rem"
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography
+                sx={{
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  color: theme.palette.neutral.main,
+                }}
+              >
+                friends{" "}
+              </Typography>
+              <Link>
+                <Typography
+                  sx={{
+                    fontSize: "1.1rem",
+                    fontWeight: "600",
+                    color: theme.palette.neutral.main,
+                    cursor: "pointer",
+                    "&:hover": {
+                      color: theme.palette.primary.main,
+                    },
+                  }}
+                >
+                  70{" "}
+                </Typography>
+              </Link>
+            </Box>
           </FlexBetween>
         </Box>
         <Wrapper>
@@ -95,33 +202,36 @@ function Rightbar() {
               variant="h5"
               color={theme.palette.neutral.light}
               sx={{
-                fontSize: "1.4rem",
+                fontSize: "1.3rem",
               }}
             >
-              Recomended for you
+              Recomendation for you
             </Typography>
           </Box>
-          <PeopleCard
-            imageStyle={{ width: "3.5rem", height: "3.5rem" }}
-            titleStyle={{ fontSize: "1.3rem", fontWeight: "600" }}
-            bioStyle={{
-              fontSize: "1.1rem",
-            }}
-          />
-          <PeopleCard
-            imageStyle={{ width: "3.5rem", height: "3.5rem" }}
-            titleStyle={{ fontSize: "1.3rem", fontWeight: "600" }}
-            bioStyle={{
-              fontSize: "1.1rem",
-            }}
-          />
-          <PeopleCard
-            imageStyle={{ width: "3.5rem", height: "3.5rem" }}
-            titleStyle={{ fontSize: "1.3rem", fontWeight: "600" }}
-            bioStyle={{
-              fontSize: "1.1rem",
-            }}
-          />
+          {isLoading ? (
+            <Box flexDirection="column" flex={5} pb="8rem">
+              {skelton}
+            </Box>
+          ) : (
+            users?.map((user) => {
+              return (
+                <PeopleCard
+                  imageStyle={{ width: "3.5rem", height: "3.5rem" }}
+                  titleStyle={{ fontSize: "1.4rem", fontWeight: "600" }}
+                  bioStyle={{
+                    fontSize: "1.1rem",
+                  }}
+                  addressStyle={{
+                    mt: "0.2rem",
+                    fontSize: "0.9rem",
+                    color: theme.palette.neutral.light,
+                  }}
+                  user={user}
+                />
+              );
+            })
+          )}
+
           <FlexBetween fontSize="1.2rem" display="flex" pl="auto">
             <Link
               href="/peoples"
@@ -134,13 +244,13 @@ function Rightbar() {
             </Link>
           </FlexBetween>
         </Wrapper>
-        <Wrapper>
+        {/* <Wrapper>
           <Box margin="0.8rem">
             <Typography
               variant="h5"
               color={theme.palette.neutral.light}
               sx={{
-                fontSize: "1.4rem",
+                fontSize: "1.3rem",
               }}
             >
               Friends
@@ -150,30 +260,24 @@ function Rightbar() {
             imageStyle={{ width: "3.5rem", height: "3.5rem" }}
             titleStyle={{ fontSize: "1.3rem", fontWeight: "600" }}
             bioStyle={{
-              fontSize: "1.1rem",
+              fontSize: "1.02rem",
             }}
           />
           <PeopleCard
             imageStyle={{ width: "3.5rem", height: "3.5rem" }}
             titleStyle={{ fontSize: "1.3rem", fontWeight: "600" }}
             bioStyle={{
-              fontSize: "1.1rem",
+              fontSize: "1.02rem",
             }}
           />
           <PeopleCard
             imageStyle={{ width: "3.5rem", height: "3.5rem" }}
             titleStyle={{ fontSize: "1.3rem", fontWeight: "600" }}
             bioStyle={{
-              fontSize: "1.1rem",
+              fontSize: "1.02rem",
             }}
           />
-          <PeopleCard
-            imageStyle={{ width: "3.5rem", height: "3.5rem" }}
-            titleStyle={{ fontSize: "1.3rem", fontWeight: "600" }}
-            bioStyle={{
-              fontSize: "1.1rem",
-            }}
-          />
+
           <FlexBetween fontSize="1.2rem" display="flex" pl="auto">
             <Link
               href="/friends"
@@ -185,7 +289,7 @@ function Rightbar() {
               ...view more
             </Link>
           </FlexBetween>
-        </Wrapper>
+        </Wrapper> */}
       </Box>
     </>
   );

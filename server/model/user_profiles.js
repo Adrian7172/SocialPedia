@@ -22,6 +22,10 @@ const userProfileSchema = new mongoose.Schema({
         min: 2,
         max: 20
     },
+    fullName: {
+        type: String,
+        default: null
+    },
     password: {
         type: String,
         required: true,

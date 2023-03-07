@@ -11,7 +11,7 @@ const MultistepForm = ({ children, initialValues, onSubmit }) => {
   const steps = React.Children.toArray(children);
   const [snapshot, setSnapshot] = useState(initialValues);
   const theme = useTheme();
-  const mode = useSelector((state) => state.mode);
+  const mode = useSelector((state) => state.persistedReducer.user.mode);
 
   const stepObject = steps[stepNumber];
   const step = stepObject.props.children;
@@ -92,11 +92,7 @@ const MultistepForm = ({ children, initialValues, onSubmit }) => {
         >
           {stepNumber === 0 && (
             <FlexBetween my={2}>
-              <Link
-                href="/login"
-                variant="body2"
-                fontSize={"1.6rem"}
-              >
+              <Link href="/login" variant="body2" fontSize={"1.6rem"}>
                 Already have an account? Sign in
               </Link>
             </FlexBetween>
@@ -106,7 +102,7 @@ const MultistepForm = ({ children, initialValues, onSubmit }) => {
             type="submit"
             variant="contained"
             sx={{
-              marginTop: isLastStep ? "1rem": "0",
+              marginTop: isLastStep ? "1rem" : "0",
               color: isLastStep ? "primary" : theme.palette.neutral.main,
               background: isLastStep
                 ? "primary"

@@ -1,45 +1,72 @@
-import { Autocomplete, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Avatar,
+  Box,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React from "react";
-import InputField from "./InputField";
+import { useNavigate } from "react-router-dom";
+import FlexBetween from "./FlexBetween";
 
-const AutoComplete = () => {
-  const top100Films = [
-    { title: "The Shawshank Redemption", year: 1994 },
-    { title: "The Godfather", year: 1972 },
-    { title: "The Godfather: Part II", year: 1974 },
-    { title: "The Dark Knight", year: 2008 },
-    { title: "12 Angry Men", year: 1957 },
-    { title: "Schindler's List", year: 1993 },
-    { title: "Pulp Fiction", year: 1994 },
-    {
-      title: "The Lord of the Rings: The Return of the King",
-      year: 2003,
-    },
-    { title: "The Good, the Bad and the Ugly", year: 1966 },
-    { title: "Fight Club", year: 1999 },
-    {
-      title: "The Lord of the Rings: The Fellowship of the Ring",
-      year: 2001,
-    },
-    {
-      title: "Star Wars: Episode V - The Empire Strikes Back",
-      year: 1980,
-    },
-    { title: "Forrest Gump", year: 1994 },
-    { title: "Inception", year: 2010 },
-    {
-      title: "The Lord of the Rings: The Two Towers",
-      year: 2002,
-    },
-  ];
+const AutoComplete = ({ users }) => {
+  const navigate = useNavigate();
+  
+  // check if users has data
+  if (!users) return;
+
+  const renderOption = (props, option, { selected }) => {
+    const profilePicture = option?.profilePicture?.imageData;
+    const fullName = option?.fullName;
+    const bio = trucateString(option?.bio);
+
+    return (
+      <FlexBetween
+        key={option?._id}
+        gap={1}
+        sx={{
+          width: "max-content",
+          p: "1rem",
+          cursor: "pointer",
+        }}
+        onClick={() => navigate(`/profile/${option?._id}`)}
+      >
+        <IconButton>
+          <Avatar
+            src={profilePicture}
+            sx={{
+              width: "4rem",
+              height: "4rem",
+            }}
+          />
+        </IconButton>
+        <Box>
+          <Typography
+            sx={{
+              fontWeight: "600",
+            }}
+          >
+            {fullName}
+          </Typography>
+          <Typography>{bio}</Typography>
+        </Box>
+      </FlexBetween>
+    );
+  };
 
   return (
     <Autocomplete
       freeSolo
+      clearOnEscape={false}
       sx={{
         borderColor: "transparent",
       }}
-      options={top100Films.map((option) => option.title)}
+      options={users}
+      getOptionLabel={(option) =>
+        `${option.fullName || ""} ${option.bio || ""}`
+      }
+      renderOption={renderOption}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -70,8 +97,20 @@ const AutoComplete = () => {
           }}
         />
       )}
+      onChange={(event, value) => {
+        if (value) {
+          navigate(`/search/${value}`);
+        }
+      }}
     />
   );
 };
 
 export default AutoComplete;
+
+function trucateString(str) {
+  if (str?.length > 33) {
+    str = str.slice(0, 30) + "...";
+  }
+  return str;
+}
