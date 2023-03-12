@@ -2,6 +2,7 @@
 const Images = require("../model/Images");
 const { User_posts, Post_images } = require("../model/User_posts");
 const User_profiles = require("../model/User_profiles");
+const Likes = require("../model/Likes")
 const uploadPicture = require("./uploadPicture");
 
 
@@ -34,6 +35,7 @@ const storePost = async (req, res) => {
 };
 
 
+
 const getAllPost = async (req, res) => {
     try {
         if (!req.user) {
@@ -61,30 +63,94 @@ const getAllPost = async (req, res) => {
 
 
 const getUserPost = async (req, res) => {
-    if (!req.user) {
-        res.status(403).json({ message: "Please login to create a post." });
-        return;
-    }
-    const id = (req.params["id"]).toString();
-    const allPosts = await Post_images.find().populate({
-        path: "postId",
-        populate: {
-            path: "userId",
-            model: "User_profiles",
-            populate: {
-                path: "profilePicture",
-                model: "Images"
-            }
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
         }
-    }).populate("imageId").sort({ createdAt: -1 });
+        const id = (req.params["id"]).toString();
+        const allPosts = await Post_images.find().populate({
+            path: "postId",
+            populate: {
+                path: "userId",
+                model: "User_profiles",
+                populate: {
+                    path: "profilePicture",
+                    model: "Images"
+                }
+            }
+        }).populate("imageId").sort({ createdAt: -1 });
 
-    const user = await User_profiles.findById({ _id: id }).populate("profilePicture");
+        const user = await User_profiles.findById({ _id: id }).populate("profilePicture");
 
-    const userPost = allPosts.filter(({ postId }) => {
-        return ((postId.userId._id).toString() === id);
-    })
-    res.status(200).json({ userPost, user });
+        const userPost = allPosts.filter(({ postId }) => {
+            return ((postId.userId._id).toString() === id);
+        })
+        res.status(200).json({ userPost, user });
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
 }
 
+const postLikeComment = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        const id = req.params["id"];
+        const likes = await Likes.find({ parent: id, parentType: "User_posts" });
 
-module.exports = { storePost, getAllPost, getUserPost };
+        // get comments
+        const comments = null
+
+        res.status(200).json({ likes, comments })
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+/* LIKE POST */
+const likePost = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        const {
+            userId,
+            postId
+        } = req.body;
+
+        const newLike = new Likes({
+            userId: userId,
+            parent: postId,
+            parentType: "User_posts"
+        })
+        const response = await newLike.save();
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+/* REMOVE LIKE POST */
+const removeLikePost = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        const {
+            userId,
+            postId
+        } = req.body;
+
+        const response = await Likes.deleteOne({ userId: userId, parent: postId, parentType: "User_posts" })
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+module.exports = { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost };

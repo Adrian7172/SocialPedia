@@ -25,16 +25,18 @@ import Image from "mui-image";
 import logo from "../assets/logo2.png";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode } from "state/authSlice";
+import { setLogout, setMode } from "state/authSlice";
 import AutoComplete from "./AutoComplete";
 import FlexBetween from "./FlexBetween";
 import { useGetAllUserQuery } from "state/api/userApi";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const boxRef = useRef(null);
   const [openSearch, setOpenSearch] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const navigate = useNavigate();
   const theme = useTheme();
   const dispatch = useDispatch();
   const mode = useSelector((state) => state.persistedReducer.user.mode);
@@ -42,9 +44,7 @@ const Navbar = () => {
   const user = useSelector((state) => state.persistedReducer.user.userData);
 
   /* get all user for search */
-  const {
-    data: allUser,
-  } = useGetAllUserQuery(token);
+  const { data: allUser } = useGetAllUserQuery(token);
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -252,7 +252,7 @@ const Navbar = () => {
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            <MenuItem>
+            <MenuItem onClick={()=> navigate(`/profile/${user?._id}`)}>
               <Avatar /> My Profile
             </MenuItem>
             <Divider />
@@ -262,7 +262,7 @@ const Navbar = () => {
               </ListItemIcon>
               Settings
             </MenuItem>
-            <MenuItem>
+            <MenuItem onClick={() => dispatch(setLogout())}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>

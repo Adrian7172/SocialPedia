@@ -15,6 +15,16 @@ export const userApi = createApi({
                 },
             })
         }),
+        getAllFriends: builder.query({
+            query: (body) => ({
+                url: `/allFriends/${body[1]}`,
+                method: "GET",
+                headers: {
+                    Authorization: body[0]
+                },
+            }),
+            providesTags: ["getAllFriends"]
+        }),
         getUser: builder.query({
             query: (body) => ({
                 url: `/user/${body[1]}`,
@@ -22,7 +32,7 @@ export const userApi = createApi({
                 headers: {
                     Authorization: body[0]
                 },
-            })
+            }),
         }),
         getSearchedUsers: builder.query({
             query: (body) => ({
@@ -32,9 +42,42 @@ export const userApi = createApi({
                     Authorization: body[0]
                 },
             })
-        })
+        }),
+        addFriend: builder.mutation({
+            query: (body) => ({
+                url: '/addFriend',
+                method: "POST",
+                headers: {
+                    Authorization: body[0]
+                },
+                body: body[1]
+            }),
+            invalidatesTags: ["getAllFriends"]
+        }),
+        removeFriend: builder.mutation({
+            query: (body) => ({
+                url: '/removeFriend',
+                method: "DELETE",
+                headers: {
+                    Authorization: body[0]
+                },
+                body: body[1]
+            }),
+            invalidatesTags: ["getAllFriends"]
+        }),
+        acceptRequest: builder.mutation({
+            query: (body) => ({
+                url: '/acceptRequest',
+                method: "PATCH",
+                headers: {
+                    Authorization: body[0]
+                },
+                body: body[1]
+            }),
+            invalidatesTags: ["getAllFriends"]
+        }),
     })
 })
 
 
-export const { useGetAllUserQuery, useGetUserQuery, useGetSearchedUsersQuery } = userApi
+export const { useGetAllUserQuery, useGetUserQuery, useGetSearchedUsersQuery, useAddFriendMutation, useRemoveFriendMutation, useGetAllFriendsQuery, useAcceptRequestMutation } = userApi

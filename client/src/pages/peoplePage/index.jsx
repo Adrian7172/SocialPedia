@@ -9,18 +9,23 @@ import { useGetAllUserQuery } from "state/api/userApi";
 
 const PeoplePage = () => {
   const token = useSelector((state) => state.persistedReducer.user.token);
+  const currUser = useSelector((state) => state.persistedReducer.user.userData);
 
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const verySmallScreen = useMediaQuery("(max-width: 320px)");
-  const { data: allUser, isLoading } = useGetAllUserQuery(token);
+  const { data , isLoading } = useGetAllUserQuery(token);
+
+  const allUser = data?.filter((data) => {
+    return data?._id !== currUser?._id;
+  });
 
   // skelton
-  const skelton = Array.from({ length: 5 }, (_, index) => (
+  const skelton = Array.from({ length: 10 }, (_, index) => (
     <Box
       key={index}
       sx={{
-        p: "0.5rem",
+        p: "1rem",
       }}
     >
       <Box display="flex" gap={2}>
@@ -32,14 +37,11 @@ const PeoplePage = () => {
             mb: "0.5rem",
           }}
         />{" "}
-        <Box width="80%">
+        <Box width="80%" mb="0.5rem">
           <Skeleton variant="text" sx={{ fontSize: "2rem", width: "50%" }} />
+          <Skeleton variant="text" sx={{ fontSize: "2rem", width: "80%" }} />
         </Box>
       </Box>
-      <Skeleton
-        variant="text"
-        sx={{ fontSize: "2rem", width: "100%", mb: "1rem" }}
-      />
       <Divider />
     </Box>
   ));

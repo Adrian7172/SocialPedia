@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  Divider,
   IconButton,
   TextField,
   Typography,
@@ -12,7 +13,7 @@ import FlexBetween from "./FlexBetween";
 
 const AutoComplete = ({ users }) => {
   const navigate = useNavigate();
-  
+
   // check if users has data
   if (!users) return;
 
@@ -22,36 +23,41 @@ const AutoComplete = ({ users }) => {
     const bio = trucateString(option?.bio);
 
     return (
-      <FlexBetween
+      <Box
         key={option?._id}
         gap={1}
         sx={{
-          width: "max-content",
+          display: "flex",
+          width: "100%",
           p: "1rem",
           cursor: "pointer",
+          flexDirection: "column",
         }}
         onClick={() => navigate(`/profile/${option?._id}`)}
       >
-        <IconButton>
-          <Avatar
-            src={profilePicture}
-            sx={{
-              width: "4rem",
-              height: "4rem",
-            }}
-          />
-        </IconButton>
-        <Box>
-          <Typography
-            sx={{
-              fontWeight: "600",
-            }}
-          >
-            {fullName}
-          </Typography>
-          <Typography>{bio}</Typography>
+        <Box display="flex">
+          <IconButton>
+            <Avatar
+              src={profilePicture}
+              sx={{
+                width: "4rem",
+                height: "4rem",
+              }}
+            />
+          </IconButton>
+          <Box>
+            <Typography
+              sx={{
+                fontWeight: "600",
+              }}
+            >
+              {fullName}
+            </Typography>
+            <Typography>{bio}</Typography>
+          </Box>
         </Box>
-      </FlexBetween>
+        <Divider width="100%" />
+      </Box>
     );
   };
 

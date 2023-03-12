@@ -62,14 +62,14 @@ const SearchResult = () => {
         <Box flexDirection="column" flex={5} pb="8rem">
           <Wrapper>{skelton}</Wrapper>
         </Box>
-      ) : searched?.length === 0 ? (
+      ) : searchedUsers?.length === 0 ? (
         <Box flexDirection="column" flex={5} pb="8rem">
           <Wrapper>No result</Wrapper>
         </Box>
       ) : (
         <Box flexDirection="column" flex={5} pb="8rem">
           <Wrapper>
-            {searchedUsers.map((user) => {
+            {searchedUsers?.map((user) => {
               return (
                 <PeopleCard
                   key={user?._id}

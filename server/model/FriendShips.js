@@ -18,5 +18,5 @@ const FriendshipSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const FriendShips = mongoose.Model("FriendShips", FriendshipSchema);
+const FriendShips = mongoose.model("FriendShips", FriendshipSchema);
 module.exports = FriendShips;

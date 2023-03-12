@@ -1,6 +1,7 @@
 import { useTheme } from "@emotion/react";
 import { Avatar, Box, Button, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import CustDivider from "./CustDivider";
 import FlexBetween from "./FlexBetween";
 
@@ -14,13 +15,14 @@ const PeopleCard = ({
   user = null,
 }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const verySmallScreen = useMediaQuery("(max-width: 320px)");
 
   const fullName = user?.fullName;
   const bio = trucateString(user?.bio);
   const address = `${user?.address?.state}, ${user?.address?.country}`;
   const profilePicture = user?.profilePicture?.imageData;
+  console.log(user?.id);
   return (
     <Box
       sx={{
@@ -28,7 +30,16 @@ const PeopleCard = ({
         p: smallScreen ? "0.4rem" : "1rem",
       }}
     >
-      <Box display="flex" gap={2}>
+      <Box
+        display="flex"
+        gap={2}
+        onClick={() => {
+          navigate(`/profile/${user?._id}`);
+        }}
+        sx={{
+          cursor: "pointer",
+        }}
+      >
         <Avatar src={profilePicture} sx={imageStyle} />
         <Box>
           <Typography variant="h5" sx={titleStyle}>

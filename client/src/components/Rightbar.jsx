@@ -21,9 +21,13 @@ function Rightbar() {
   const theme = useTheme();
   const user = useSelector((state) => state.persistedReducer.user.userData);
   const token = useSelector((state) => state.persistedReducer.user.token);
+  const currUser = useSelector((state) => state.persistedReducer.user.userData);
 
   const { data: allUser, isLoading } = useGetAllUserQuery(token);
-  const users = allUser?.slice(0, 3);
+  const modifiedData = allUser?.filter((data) => {
+    return data?._id !== currUser?._id;
+  });
+  const users = modifiedData?.slice(0, 3);
   const mediumScreen = useMediaQuery("(max-width: 1000px)");
 
   // skelton
@@ -43,11 +47,11 @@ function Rightbar() {
             mb: "0.5rem",
           }}
         />{" "}
-        <Box width="60%">
-          <Skeleton variant="text" sx={{ fontSize: "1.5rem", width: "60%" }} />
+        <Box flexDirection="column" width="80%">
+          <Skeleton variant="text" sx={{ fontSize: "1.5rem", width: "80%" }} />
+          <Skeleton variant="text" sx={{ fontSize: "1.5rem", width: "80%" }} />
         </Box>
       </Box>
-      <Skeleton variant="text" sx={{ fontSize: "1.5rem", width: "100%" }} />
     </Box>
   ));
   return (
@@ -216,6 +220,7 @@ function Rightbar() {
             users?.map((user) => {
               return (
                 <PeopleCard
+                  key={user?._id}
                   imageStyle={{ width: "3.5rem", height: "3.5rem" }}
                   titleStyle={{ fontSize: "1.4rem", fontWeight: "600" }}
                   bioStyle={{

@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import Image from "mui-image";
 import {
+  DoneOutlined,
   Edit,
   HomeOutlined,
   PermContactCalendarOutlined,
@@ -23,18 +24,130 @@ import AddPost from "components/AddPost";
 import UserPost from "components/UserPost";
 import { useGetUserPostQuery } from "state/api/postApi";
 import { useParams } from "react-router-dom";
+import FlexBetween from "components/FlexBetween";
+import {
+  useAcceptRequestMutation,
+  useAddFriendMutation,
+  useGetAllFriendsQuery,
+  useRemoveFriendMutation,
+} from "state/api/userApi";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 const ProfilePage = () => {
+  const [ignore, setIgnore] = useState(false);
+
   const theme = useTheme();
   const mode = useSelector((state) => state.persistedReducer.user.mode);
   const token = useSelector((state) => state.persistedReducer.user.token);
   const currUser = useSelector((state) => state.persistedReducer.user.userData);
 
   const userId = useParams();
-  const { data: userData, isLoading } = useGetUserPostQuery([token, userId.id]);
 
+  /* GET USER DATA AND POSTS */
+  const { data: userData, isLoading } = useGetUserPostQuery([token, userId.id]);
   const user = userData?.user;
   const userPost = userData?.userPost;
+
+  /* GET ALL FRIENDS */
+  const { data: friendsAndRequests } = useGetAllFriendsQuery([
+    token,
+    currUser?._id,
+  ]);
+
+  /* USER FRIENDS */
+  const friends = friendsAndRequests?.filter(
+    (friendShip) => friendShip.status === "accepted"
+  );
+
+  /* COMMING REQUESTS */
+  const friendRequests = friendsAndRequests?.filter(
+    (friendShip) =>
+      friendShip.user2 === currUser?._id && friendShip.status === "pending"
+  );
+
+  /* SENDED REQUEST */
+  const sendedRequests = friendsAndRequests?.filter(
+    (friendShip) =>
+      friendShip.user1 === currUser?._id && friendShip.status === "pending"
+  );
+
+  const isFriend = friends?.some(
+    (friendship) =>
+      friendship.user1 === user?._id || friendship.user2 === user?._id
+  );
+  const isFriendRequestResponder = friendRequests?.some(
+    (friendship) => friendship.user1 === user?._id
+  );
+
+  const isFriendRequester = sendedRequests?.some(
+    (friendship) => friendship.user2 === user?._id
+  );
+
+  /* ADD FRIEND */
+  const [addFriend] = useAddFriendMutation();
+  /* REMOVE A FRIEND */
+  const [removeFriend] = useRemoveFriendMutation();
+  /* ACCEPT REQUEST */
+  const [acceptRequest] = useAcceptRequestMutation();
+
+  async function modifyFriendList() {
+    try {
+      if (isFriend) {
+        await removeFriend([
+          token,
+          { requester: currUser?._id, responder: user?._id },
+        ]);
+        toast("Friend removed");
+        return;
+      } else if (isFriendRequestResponder) {
+        await acceptRequest([
+          token,
+          { requester: user?._id, responder: currUser?._id },
+        ]);
+        toast("Friend request accepted");
+        return;
+      } else if (isFriendRequester) {
+        await removeFriend([
+          token,
+          { requester: currUser?._id, responder: user?._id },
+        ]);
+        toast("Friend request canceled");
+        return;
+      } else {
+        await addFriend([
+          token,
+          { requester: currUser?._id, responder: user?._id },
+        ]);
+        toast("Friend request send");
+      }
+    } catch (error) {
+      const msg = error.response.data.message
+        ? error.response.data.message
+        : "Something went wrong!!!";
+      toast(msg);
+    }
+  }
+
+  /* HANDLE IGNORE */
+  async function handleIgnore() {
+    try {
+      if (isFriend) {
+        await removeFriend([
+          token,
+          { requester: currUser?._id, responder: user?._id },
+        ]);
+        return;
+      } else {
+        setIgnore(true);
+      }
+    } catch (error) {
+      const msg = error.response.data.message
+        ? error.response.data.message
+        : "Something went wrong!!!";
+      toast(msg);
+    }
+  }
 
   const address = `${user?.address?.locality}, ${user?.address?.city},
   ${user?.address?.state}, ${user?.address?.country}`;
@@ -133,7 +246,6 @@ const ProfilePage = () => {
           width="100%"
           sx={{
             margin: "1.2rem 0",
-            paddingBottom: "2rem",
             border: "1px solid",
             borderColor: theme.palette.secondary.main,
             borderRadius: "1rem",
@@ -307,6 +419,7 @@ const ProfilePage = () => {
                     ? "1.2rem"
                     : "1.4rem",
                   wordBreak: "break-word",
+                  mb: "2rem",
                 }}
               >
                 {isLoading ? (
@@ -319,28 +432,49 @@ const ProfilePage = () => {
                 )}
               </Typography>
             </Box>
-            {/* <Box display="flex" gap={smallScreen ? 1 : 2}>
-              <RemoveRedEyeOutlined
+          </Box>
+          {currUser?._id !== user?._id && !ignore && (
+            <FlexBetween
+              gap={1}
+              sx={{
+                width: "100%",
+              }}
+            >
+              <Button
+                onClick={handleIgnore}
                 sx={{
-                  p: "0.15rem",
-                }}
-              />
-              <Typography
-                sx={{
-                  width: "100%",
-                  color: theme.palette.neutral.main,
-                  fontSize: !smallScreen
-                    ? "1.5rem"
-                    : verySmallScreen
-                    ? "1.2rem"
-                    : "1.4rem",
-                  wordBreak: "break-word",
+                  width: "50%",
+                  color: theme.palette.neutral.light,
+                  textTransform: "none",
+                  fontSize: "1.5rem",
                 }}
               >
-                {Math.floor(Math.random() * 1000)}
-              </Typography>
-            </Box> */}
-          </Box>
+                {isFriend ? "Remove Friend" : "ignore"}
+              </Button>
+              <Button
+                onClick={() => modifyFriendList()}
+                variant="contained"
+                sx={{
+                  width: "50%",
+                  textTransform: "none",
+                }}
+              >
+                {isFriend ? (
+                  <>
+                    <DoneOutlined /> Friends
+                  </>
+                ) : isFriendRequestResponder ? (
+                  "Accept Friend Request"
+                ) : isFriendRequester ? (
+                  <>
+                    <DoneOutlined /> Request Sended
+                  </>
+                ) : (
+                  "Add Friends"
+                )}
+              </Button>
+            </FlexBetween>
+          )}
         </Box>
         {user?._id === currUser?._id && <AddPost />}
         {isLoading ? (

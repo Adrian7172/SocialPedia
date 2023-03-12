@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTheme } from "@emotion/react";
 import {
   BookmarkBorderOutlined,
   ChatBubbleOutline,
+  Favorite,
+  FavoriteBorder,
   FavoriteBorderOutlined,
   MoreHoriz,
   Share,
@@ -19,8 +21,19 @@ import Image from "mui-image";
 import Wrapper from "./Wrapper";
 import { formatDistanceToNow } from "date-fns";
 import FlexBetween from "./FlexBetween";
+import { useNavigate } from "react-router-dom";
+import {
+  useGetPostLikeCommentQuery,
+  useLikePostMutation,
+  useRemoveLikePostMutation,
+} from "state/api/postApi";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const UserPost = ({ imageId, postId }) => {
+  const currUser = useSelector((state) => state.persistedReducer.user.userData);
+  const token = useSelector((state) => state.persistedReducer.user.token);
+
   // user data
   const user = postId?.userId;
 
@@ -29,11 +42,50 @@ const UserPost = ({ imageId, postId }) => {
   const date = formatDistanceToNow(createdAt, { addSuffix: true });
 
   const theme = useTheme();
+  const navigate = useNavigate();
 
   /*  BREAK POINTS */
   const tabScreen = useMediaQuery("(max-width:765px)");
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const verySmallScreen = useMediaQuery("(max-width: 320px)");
+
+  /* GET LIKES AND COMMENTS */
+  const { data: likesAndComments, isLoading } = useGetPostLikeCommentQuery([
+    token,
+    postId?._id,
+  ]);
+
+  const likes = likesAndComments?.likes;
+  const comments = likesAndComments?.comments;
+
+  /* IS POST LIKED BY USER */
+  const isLiked = likes?.some((data) => {
+    return data.userId === currUser?._id;
+  });
+
+  /* HANDLE LIKE */
+  const [likePost] = useLikePostMutation();
+  const [removeLike] = useRemoveLikePostMutation();
+  async function handleLike() {
+    try {
+      if (isLiked) {
+        await removeLike([
+          token,
+          { userId: currUser?._id, postId: postId?._id },
+        ]);
+      } else {
+        await likePost([token, { userId: currUser?._id, postId: postId?._id }]);
+      }
+    } catch (error) {
+      const msg = error.response.data.message
+        ? error.response.data.message
+        : "Something went wrong!!!";
+      toast(msg);
+    }
+  }
+
+  /* HANDLE COMMENT CLICK */
+  function handleComment() {}
 
   return (
     <Wrapper width="100%">
@@ -42,6 +94,7 @@ const UserPost = ({ imageId, postId }) => {
           <Box display="flex" justifyContent="space-between">
             <Box display="flex" gap={2} alignItems="center">
               <Avatar
+                onClick={() => navigate(`/profile/${user?._id}`)}
                 src={user?.profilePicture?.imageData}
                 sx={{
                   width: "4.5rem",
@@ -51,8 +104,10 @@ const UserPost = ({ imageId, postId }) => {
               />
               <Box>
                 <Typography
+                  onClick={() => navigate(`/profile/${user?._id}`)}
                   variant="h5"
                   sx={{
+                    cursor: "pointer",
                     fontSize: "1.55rem",
                     fontWeight: "600",
                   }}
@@ -61,7 +116,7 @@ const UserPost = ({ imageId, postId }) => {
                 </Typography>
                 <Typography
                   sx={{
-                    fontSize: tabScreen ? "1.1rem" : "1.2rem",
+                    fontSize: tabScreen ? "1.05rem" : "1.2rem",
                     color: theme.palette.neutral.light,
                   }}
                 >
@@ -85,11 +140,7 @@ const UserPost = ({ imageId, postId }) => {
           >
             <Typography
               sx={{
-                fontSize: tabScreen
-                ? smallScreen
-                  ? "1.2rem"
-                  : "1.3rem"
-                : "1.5rem",
+                fontSize: tabScreen ? "1.4rem" : "1.5rem",
                 color: theme.palette.neutral.main,
               }}
             >
@@ -121,23 +172,26 @@ const UserPost = ({ imageId, postId }) => {
             }}
           >
             <FlexBetween>
-              <IconButton aria-label="add to favorites">
-                <FavoriteBorderOutlined />
+              <IconButton aria-label="add to favorites" onClick={handleLike}>
+                {isLiked ? (
+                  <Favorite sx={{ color: "red" }} />
+                ) : (
+                  <FavoriteBorderOutlined />
+                )}
               </IconButton>
               <Typography
                 sx={{
-                  fontSize: tabScreen ? "1.1rem" : "1.2rem",
+                  fontSize: tabScreen ? "1.15rem" : "1.25rem",
                   cursor: "pointer",
                   color: theme.palette.neutral.light,
                 }}
               >
-                12 likes
+                {likes?.length} likes
               </Typography>
             </FlexBetween>
             <FlexBetween>
-              <IconButton aria-label="add to favorites">
-                <ChatBubbleOutline
-                />
+              <IconButton aria-label="add to favorites" onClick={handleComment}>
+                <ChatBubbleOutline />
               </IconButton>
               <Typography
                 sx={{
