@@ -4,6 +4,7 @@ const FriendShips = require("../model/FriendShips");
 const User_profiles = require("../model/user_profiles");
 
 
+
 /* GET ALL USERS */
 const getAllUser = async (req, res) => {
     try {
