@@ -51,7 +51,7 @@ function App() {
   // protectedRoute
   const ProtectedRoute = ({ children }) => {
     console.log(children)
-    if (!user && !(children.type.name === "LoginPage" || children.type.name === "RegisterPage")) {
+    if (!user && !(children.type.name === "LoginPage" && children.type.name === "RegisterPage")) {
       return <Navigate to="/login" />
     }
     // if (user && (children.type.name === "LoginPage" || children.type.name === "RegisterPage")) {
