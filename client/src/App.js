@@ -58,8 +58,7 @@ function App() {
     }
     return children;
   }
-
-
+  
   const router = createBrowserRouter([
     {
       path: "/",
