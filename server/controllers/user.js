@@ -1,5 +1,6 @@
 
-const FriendShips = require("../model/friendShips");
+
+const FriendShips = require("../model/FriendShips");
 const User_profiles = require("../model/user_profiles");
 
 
