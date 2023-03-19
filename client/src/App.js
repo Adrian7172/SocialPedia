@@ -21,7 +21,6 @@ import Leftbar from "components/Leftbar";
 import Rightbar from "components/Rightbar";
 import PeoplePage from "pages/peoplePage";
 import FriendsPage from "pages/friendsPage";
-// import ProfilePage from "pages/profilePage";
 import SearchResult from "components/SearchResult";
 
 const ProfilePage = React.lazy(() => import("pages/profilePage"))

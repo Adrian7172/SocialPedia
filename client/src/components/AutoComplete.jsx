@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import FlexBetween from "./FlexBetween";
 
 const AutoComplete = ({ users }) => {
   const navigate = useNavigate();
