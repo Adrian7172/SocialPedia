@@ -1,5 +1,6 @@
-const User_profiles = require("../model/User_profiles")
-const FriendShips = require("../model/FriendShips")
+
+const FriendShips = require("../model/FriendShips");
+const User_profiles = require("../model/User_profiles");
 
 
 /* GET ALL USERS */

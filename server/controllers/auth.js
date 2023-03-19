@@ -1,8 +1,9 @@
-const User_profiles = require("../model/User_profiles.js");
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const uploadPicture = require("./uploadPicture");
 const Images = require("../model/Images");
+const { User_profiles } = require("../model/User_profiles");
 
 
 /* REGISTER */
