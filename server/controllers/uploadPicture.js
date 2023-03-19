@@ -1,4 +1,4 @@
-const Images = require("../model/Images");
+const Images = require("../model/images");
 
 const uploadPicture = async (req, userId) => {
     try {
