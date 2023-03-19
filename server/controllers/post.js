@@ -2,7 +2,7 @@
 const Images = require("../model/Images");
 const { User_posts, Post_images } = require("../model/user_posts");
 const User_profiles = require("../model/user_profiles");
-const Likes = require("../model/likes")
+const Likes = require("../model/Likes")
 const uploadPicture = require("./uploadPicture");
 
 
