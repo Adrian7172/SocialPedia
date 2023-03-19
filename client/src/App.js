@@ -92,7 +92,6 @@ function App() {
       path: "/register",
       element: <RegisterPage />
     },
-
   ])
 
   return (

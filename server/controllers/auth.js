@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const uploadPicture = require("./uploadPicture");
 const Images = require("../model/Images");
-const { User_profiles } = require("../model/user_profiles");
+const User_profiles = require("../model/user_profiles");
 
 
 /* REGISTER */
