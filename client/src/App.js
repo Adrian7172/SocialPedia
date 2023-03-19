@@ -50,6 +50,7 @@ function App() {
 
   // protectedRoute
   const ProtectedRoute = ({ children }) => {
+    console.log(children)
     if (!user && !(children.type.name === "LoginPage" || children.type.name === "RegisterPage")) {
       return <Navigate to="/login" />
     }
@@ -88,11 +89,11 @@ function App() {
     },
     {
       path: "/login",
-      element: <ProtectedRoute><LoginPage /></ProtectedRoute>
+      element: <LoginPage />
     },
     {
       path: "/register",
-      element: <ProtectedRoute><RegisterPage /></ProtectedRoute>
+      element: <RegisterPage />
     },
 
   ])
