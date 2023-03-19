@@ -39,8 +39,9 @@ const store = configureStore({
             serializableCheck: {
                 ignoreActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
             }
-        }).concat(authApi.middleware, postApi.middleware, userApi.middleware)
-    ]
+        }).concat(authApi.middleware, postApi.middleware, userApi.middleware),
+    ],
+    devTools: false
 });
 
 export default store;
