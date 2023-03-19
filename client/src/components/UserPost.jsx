@@ -3,17 +3,24 @@ import { useTheme } from "@emotion/react";
 import {
   BookmarkBorderOutlined,
   ChatBubbleOutline,
+  EmojiEmotions,
   Favorite,
   FavoriteBorder,
   FavoriteBorderOutlined,
   MoreHoriz,
+  Send,
   Share,
 } from "@mui/icons-material";
 import {
   Avatar,
   Box,
   CardActions,
+  CardContent,
+  Collapse,
   IconButton,
+  styled,
+  TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -29,8 +36,18 @@ import {
 } from "state/api/postApi";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import InputField from "./InputField";
+import AddPost from "./AddPost";
+import { Form, FormikProvider, useFormik } from "formik";
+import CustDivider from "./CustDivider";
 
 const UserPost = ({ imageId, postId }) => {
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   const currUser = useSelector((state) => state.persistedReducer.user.userData);
   const token = useSelector((state) => state.persistedReducer.user.token);
 
@@ -84,8 +101,32 @@ const UserPost = ({ imageId, postId }) => {
     }
   }
 
-  /* HANDLE COMMENT CLICK */
-  function handleComment() {}
+  /* COMMENT (Formik)*/
+  const formik = useFormik({
+    initialValues: {
+      comment: "",
+    },
+    onSubmit: async (values, { resetForm }) => {},
+  });
+
+  /* COMMENT BOX */
+  const CommentBox = ({ user, comment }) => {
+    return (
+      <FlexBetween bgcolor="red">
+        <Avatar flex={2}
+          src={user?.profilePicture}
+          sx={{
+            width: "3rem",
+            height: "3rem",
+          }}
+        />
+        <Box flex={5}>
+          <Typography>{user?.fullName}</Typography>
+          <Typography>{comment}</Typography>
+        </Box>
+      </FlexBetween>
+    );
+  };
 
   return (
     <Wrapper width="100%">
@@ -140,7 +181,7 @@ const UserPost = ({ imageId, postId }) => {
           >
             <Typography
               sx={{
-                fontSize: tabScreen ? "1.4rem" : "1.5rem",
+                fontSize: tabScreen ? "1.45rem" : "1.55rem",
                 color: theme.palette.neutral.main,
               }}
             >
@@ -181,7 +222,7 @@ const UserPost = ({ imageId, postId }) => {
               </IconButton>
               <Typography
                 sx={{
-                  fontSize: tabScreen ? "1.15rem" : "1.25rem",
+                  fontSize: tabScreen ? "1.2rem" : "1.3rem",
                   cursor: "pointer",
                   color: theme.palette.neutral.light,
                 }}
@@ -189,27 +230,32 @@ const UserPost = ({ imageId, postId }) => {
                 {likes?.length} likes
               </Typography>
             </FlexBetween>
-            <FlexBetween>
-              <IconButton aria-label="add to favorites" onClick={handleComment}>
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              <IconButton aria-label="add to favorites">
                 <ChatBubbleOutline />
               </IconButton>
               <Typography
                 sx={{
-                  fontSize: tabScreen ? "1.1rem" : "1.2rem",
+                  fontSize: tabScreen ? "1.2rem" : "1.3rem",
                   cursor: "pointer",
                   color: theme.palette.neutral.light,
                 }}
               >
                 12 comments
               </Typography>
-            </FlexBetween>
+            </ExpandMore>
             <FlexBetween>
               <IconButton aria-label="add to favorites">
                 <Share />
               </IconButton>
               <Typography
                 sx={{
-                  fontSize: tabScreen ? "1.1rem" : "1.2rem",
+                  fontSize: tabScreen ? "1.2rem" : "1.3rem",
                   cursor: "pointer",
                   color: theme.palette.neutral.light,
                 }}
@@ -218,6 +264,70 @@ const UserPost = ({ imageId, postId }) => {
               </Typography>
             </FlexBetween>
           </CardActions>
+          <Collapse
+            in={expanded}
+            timeout="auto"
+            unmountOnExit
+            sx={{
+              pt: "3rem",
+            }}
+          >
+            <FormikProvider value={formik}>
+              <Form onSubmit={formik.handleSubmit}>
+                <FlexBetween gap={1}>
+                  <Avatar
+                    src={currUser?.profilePicture}
+                    sx={{
+                      width: "3rem",
+                      height: "3rem",
+                    }}
+                  />
+                  <InputField
+                    name="comment"
+                    type="text"
+                    size="small"
+                    multiline
+                    rows={0}
+                    placeholder="Add Comment"
+                    sx={{
+                      width: "100%",
+                      bgcolor: theme.palette.secondary.light,
+                      borderRadius: "1rem",
+
+                      "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderColor: "transparent",
+                          borderWidth: 0,
+                          outline: 0,
+                        },
+                      "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+                        {
+                          borderColor: "transparent",
+                        },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "transparent",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "transparent",
+                      },
+                    }}
+                  />
+                  <Tooltip title="post">
+                    <IconButton
+                      sx={{
+                        color: theme.palette.primary.main,
+                      }}
+                    >
+                      <Send />
+                    </IconButton>
+                  </Tooltip>
+                </FlexBetween>
+              </Form>
+            </FormikProvider>
+            <CustDivider/>
+            
+            <CommentBox />
+          </Collapse>
         </Box>
       </Box>
     </Wrapper>
@@ -225,3 +335,10 @@ const UserPost = ({ imageId, postId }) => {
 };
 
 export default UserPost;
+
+const ExpandMore = styled((props) => {
+  const { expand, ...other } = props;
+  return <FlexBetween {...other} />;
+})(({ theme, expand }) => ({
+  marginLeft: "auto",
+}));
