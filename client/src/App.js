@@ -50,15 +50,16 @@ function App() {
 
   // protectedRoute
   const ProtectedRoute = ({ children }) => {
-    if (token === null && !(children.type.name === "LoginPage" || children.type.name === "RegisterPage")) {
-      return <Navigate to="/login" />
+    if (token === null) {
+      if (children.type.name === "LoginPage" || children.type.name === "RegisterPage") return children;
+      else return <Navigate to="/login" />
+    } else if (token !== null) {
+      if (children.type.name === "LoginPage" || children.type.name === "RegisterPage") return <Navigate to="/" />;
+      else
+        return children;
     }
-    if (token !== null && (children.type.name === "LoginPage" || children.type.name === "RegisterPage")) {
-      return <Navigate to="/" />
-    }
-    return children;
   }
-  
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -92,7 +93,7 @@ function App() {
     },
     {
       path: "/register",
-      element:<ProtectedRoute><RegisterPage /></ProtectedRoute>
+      element: <ProtectedRoute><RegisterPage /></ProtectedRoute>
     },
 
   ])
