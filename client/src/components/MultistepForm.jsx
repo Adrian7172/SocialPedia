@@ -101,6 +101,7 @@ const MultistepForm = ({ children, initialValues, onSubmit, isLoading }) => {
 
           <LoadingButton
             loading={isLoading ? true : false}
+            loadingPosition="end"
             type="submit"
             variant="contained"
             sx={{

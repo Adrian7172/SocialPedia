@@ -318,91 +318,97 @@ const ProfilePage = () => {
                 user?.bio
               )}
             </Typography>
-            <Box display="flex" gap={smallScreen ? 1 : 2}>
-              <HomeOutlined
-                sx={{
-                  p: "0.15rem",
-                }}
-              />
-              <Typography
-                sx={{
-                  width: "100%",
-                  color: theme.palette.neutral.main,
-                  fontSize: !smallScreen
-                    ? "1.5rem"
-                    : verySmallScreen
-                    ? "1.2rem"
-                    : "1.4rem",
-                  wordBreak: "break-word",
-                }}
-              >
-                {isLoading ? (
-                  <Skeleton
-                    variant="text"
-                    sx={{ fontSize: "2rem", width: "100%" }}
-                  />
-                ) : (
-                  address
-                )}
-              </Typography>
-            </Box>
-            <Box display="flex" gap={smallScreen ? 1 : 2}>
-              <WorkOutline
-                sx={{
-                  p: "0.15rem",
-                }}
-              />
-              <Typography
-                sx={{
-                  width: "100%",
-                  color: theme.palette.neutral.main,
-                  fontSize: !smallScreen
-                    ? "1.5rem"
-                    : verySmallScreen
-                    ? "1.2rem"
-                    : "1.4rem",
-                  wordBreak: "break-word",
-                }}
-              >
-                {isLoading ? (
-                  <Skeleton
-                    variant="text"
-                    sx={{ fontSize: "2rem", width: "100%" }}
-                  />
-                ) : (
-                  user?.occupation
-                )}
-              </Typography>
-            </Box>
-            <Box display="flex" gap={smallScreen ? 1 : 2}>
-              <PermContactCalendarOutlined
-                sx={{
-                  p: "0.15rem",
-                }}
-              />
-              <Typography
-                sx={{
-                  width: "100%",
-                  color: theme.palette.neutral.main,
-                  fontSize: !smallScreen
-                    ? "1.5rem"
-                    : verySmallScreen
-                    ? "1.2rem"
-                    : "1.4rem",
-                  wordBreak: "break-word",
-                }}
-              >
-                {isLoading ? (
-                  <Skeleton
-                    variant="text"
-                    sx={{ fontSize: "2rem", width: "100%" }}
-                  />
-                ) : (
-                  dateOfBirth
-                )}
-                {!isLoading && <strong>. {user?.age} years old</strong>}
-              </Typography>
-            </Box>
+            {user?.address && (
+              <Box display="flex" gap={smallScreen ? 1 : 2}>
+                <HomeOutlined
+                  sx={{
+                    p: "0.15rem",
+                  }}
+                />
+                <Typography
+                  sx={{
+                    width: "100%",
+                    color: theme.palette.neutral.main,
+                    fontSize: !smallScreen
+                      ? "1.5rem"
+                      : verySmallScreen
+                      ? "1.2rem"
+                      : "1.4rem",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {isLoading ? (
+                    <Skeleton
+                      variant="text"
+                      sx={{ fontSize: "2rem", width: "100%" }}
+                    />
+                  ) : (
+                    address
+                  )}
+                </Typography>
+              </Box>
+            )}
+            {user?.occupation && (
+              <Box display="flex" gap={smallScreen ? 1 : 2}>
+                <WorkOutline
+                  sx={{
+                    p: "0.15rem",
+                  }}
+                />
+                <Typography
+                  sx={{
+                    width: "100%",
+                    color: theme.palette.neutral.main,
+                    fontSize: !smallScreen
+                      ? "1.5rem"
+                      : verySmallScreen
+                      ? "1.2rem"
+                      : "1.4rem",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {isLoading ? (
+                    <Skeleton
+                      variant="text"
+                      sx={{ fontSize: "2rem", width: "100%" }}
+                    />
+                  ) : (
+                    user?.occupation
+                  )}
+                </Typography>
+              </Box>
+            )}
+            {dateOfBirth && (
+              <Box display="flex" gap={smallScreen ? 1 : 2}>
+                <PermContactCalendarOutlined
+                  sx={{
+                    p: "0.15rem",
+                  }}
+                />
+                <Typography
+                  sx={{
+                    width: "100%",
+                    color: theme.palette.neutral.main,
+                    fontSize: !smallScreen
+                      ? "1.5rem"
+                      : verySmallScreen
+                      ? "1.2rem"
+                      : "1.4rem",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {isLoading ? (
+                    <Skeleton
+                      variant="text"
+                      sx={{ fontSize: "2rem", width: "100%" }}
+                    />
+                  ) : (
+                    dateOfBirth
+                  )}
+                  {!isLoading && <strong>. {user?.age} years old</strong>}
+                </Typography>
+              </Box>
+            )}
             <Box display="flex" gap={smallScreen ? 1 : 2}>
               <WcOutlined
                 sx={{
