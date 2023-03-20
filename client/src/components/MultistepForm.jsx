@@ -1,4 +1,5 @@
 import { ArrowBack } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import { Button, Box, Typography, useTheme, Link } from "@mui/material";
 import { Form, FormikProvider, useFormik } from "formik";
 import React, { useState } from "react";
@@ -6,7 +7,7 @@ import { useSelector } from "react-redux";
 import { colorToken } from "theme";
 import FlexBetween from "./FlexBetween";
 
-const MultistepForm = ({ children, initialValues, onSubmit }) => {
+const MultistepForm = ({ children, initialValues, onSubmit, isLoading }) => {
   const [stepNumber, setStepNumber] = useState(0);
   const steps = React.Children.toArray(children);
   const [snapshot, setSnapshot] = useState(initialValues);
@@ -98,7 +99,8 @@ const MultistepForm = ({ children, initialValues, onSubmit }) => {
             </FlexBetween>
           )}
 
-          <Button
+          <LoadingButton
+            loading={isLoading ? true : false}
             type="submit"
             variant="contained"
             sx={{
@@ -118,8 +120,8 @@ const MultistepForm = ({ children, initialValues, onSubmit }) => {
               },
             }}
           >
-            {isLastStep ? "Submit" : "Next"}
-          </Button>
+            <span>{isLastStep ? "Submit" : "Next"}</span>
+          </LoadingButton>
         </Box>
       </Form>
     </FormikProvider>

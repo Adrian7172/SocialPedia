@@ -125,6 +125,7 @@ const RegisterPage = () => {
         }}
       >
         <MultistepForm
+          isLoading={isLoading}
           initialValues={{
             firstName: "",
             lastName: "",
