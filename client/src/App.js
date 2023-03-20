@@ -10,7 +10,7 @@ import {
 
 import React, { Suspense, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Box, CircularProgress, Container, CssBaseline, Stack, ThemeProvider } from "@mui/material";
+import {CircularProgress, Container, CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material";
 import { themeSettings } from "theme";
 import { ToastContainer } from 'react-toastify';
@@ -22,6 +22,7 @@ import Rightbar from "components/Rightbar";
 import PeoplePage from "pages/peoplePage";
 import FriendsPage from "pages/friendsPage";
 import SearchResult from "components/SearchResult";
+import FlexBetween from "components/FlexBetween";
 
 const ProfilePage = React.lazy(() => import("pages/profilePage"))
 
