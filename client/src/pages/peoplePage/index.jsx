@@ -1,6 +1,5 @@
 import { useTheme } from "@emotion/react";
 import { Box, Divider, Skeleton, Typography, useMediaQuery } from "@mui/material";
-import CustDivider from "components/CustDivider";
 import PeopleCard from "components/PeopleCard";
 import Wrapper from "components/Wrapper";
 import React from "react";

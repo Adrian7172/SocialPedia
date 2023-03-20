@@ -19,6 +19,7 @@ import InputField from "components/InputField";
 import { toast } from "react-toastify";
 import { setLogin } from "state/authSlice";
 import { useUserLoginMutation } from "state/api/authApi";
+import { LoadingButton } from "@mui/lab";
 
 const LoginPage = () => {
   const [loginUser, { isLoading, isError, error }] = useUserLoginMutation();
@@ -166,7 +167,9 @@ const LoginPage = () => {
                     Forgot password?
                   </Link>
                 </Box>
-                <Button
+                <LoadingButton
+                  loading={isLoading ? true : false}
+                  loadingPosition="end"
                   type="submit"
                   fullWidth
                   variant="contained"
@@ -178,8 +181,8 @@ const LoginPage = () => {
                     borderRadius: "1rem",
                   }}
                 >
-                  Sign In
-                </Button>
+                  <span>Sign In</span>
+                </LoadingButton>
                 <FlexBetween my={2}>
                   <Link href="/register" variant="body2" fontSize={"1.6rem"}>
                     {"Don't have an account? Sign Up"}
