@@ -10,7 +10,7 @@ import {
 
 import React, { Suspense, useMemo } from "react";
 import { useSelector } from "react-redux";
-import {CircularProgress, Container, CssBaseline, Stack, ThemeProvider } from "@mui/material";
+import { CircularProgress, Container, CssBaseline, Stack, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material";
 import { themeSettings } from "theme";
 import { ToastContainer } from 'react-toastify';
@@ -76,7 +76,7 @@ function App() {
         }
         , {
           path: "/profile/:id",
-          element: <Suspense fallback={<FlexBetween flex={8} height="100vh"><CircularProgress sx={{
+          element: <Suspense fallback={<FlexBetween flex={8} height="80vh"><CircularProgress sx={{
             color: theme.palette.primary.main
           }} /></FlexBetween>}><ProtectedRoute><ProfilePage /></ProtectedRoute></Suspense>,
         }
