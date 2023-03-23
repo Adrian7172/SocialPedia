@@ -15,11 +15,9 @@ import {
   Avatar,
   Box,
   CardActions,
-  CardContent,
   Collapse,
   IconButton,
   styled,
-  TextField,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -30,6 +28,7 @@ import { formatDistanceToNow } from "date-fns";
 import FlexBetween from "./FlexBetween";
 import { useNavigate } from "react-router-dom";
 import {
+  useAddCommentMutation,
   useGetPostLikeCommentQuery,
   useLikePostMutation,
   useRemoveLikePostMutation,
@@ -40,6 +39,7 @@ import InputField from "./InputField";
 import AddPost from "./AddPost";
 import { Form, FormikProvider, useFormik } from "formik";
 import CustDivider from "./CustDivider";
+import EmojiPoper from "./EmojiPoper";
 
 const UserPost = ({ imageId, postId }) => {
   const [expanded, setExpanded] = React.useState(false);
@@ -74,10 +74,11 @@ const UserPost = ({ imageId, postId }) => {
 
   const likes = likesAndComments?.likes;
   const comments = likesAndComments?.comments;
-  console.log(likesAndComments)
+
+
   /* IS POST LIKED BY USER */
   const isLiked = likes?.some((data) => {
-    return data.userId === currUser?._id;
+    return data.userId._id === currUser?._id;
   });
 
   /* HANDLE LIKE */
@@ -106,24 +107,77 @@ const UserPost = ({ imageId, postId }) => {
     initialValues: {
       comment: "",
     },
-    onSubmit: async (values, { resetForm }) => {},
+    onSubmit: async (values, { resetForm }) => {
+      addComments(values, resetForm);
+    },
   });
 
+  /* ADD COMMENT */
+  const [addComment] = useAddCommentMutation();
+  async function addComments(values, resetForm) {
+    try {
+      // const formData = new FormData();
+      // formData.append("comment", values.comment);
+      await addComment([
+        token,
+        {
+          userId: currUser?._id,
+          parentId: postId?._id,
+          parentType: "user_posts",
+          comment: values.comment,
+        },
+      ]);
+      resetForm();
+    } catch (error) {
+      const msg = error.response.data.message
+        ? error.response.data.message
+        : "Something went wrong!!!";
+      toast(msg);
+    }
+  }
+
   /* COMMENT BOX */
-  const CommentBox = ({ user, comment }) => {
+  const CommentBox = ({ userId, comment }) => {
     return (
-      <FlexBetween>
+      <FlexBetween
+        gap={2}
+        sx={{
+          width: "100%",
+          mb: "2rem",
+        }}
+      >
         <Avatar
           flex={2}
-          src={user?.profilePicture}
+          src={userId?.profilePicture?.imageData}
           sx={{
             width: "3rem",
             height: "3rem",
+            alignSelf: "flex-start",
+            mt: "0.4rem",
           }}
         />
-        <Box flex={5}>
-          <Typography>{user?.fullName}</Typography>
-          <Typography>{comment}</Typography>
+        <Box
+          flex={5}
+          sx={{
+            wordWrap: "break-word",
+            width: "10rem",
+            overflowWrap: "break-word",
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: "600",
+            }}
+          >
+            {userId?.fullName}
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: tabScreen ? "1.1rem" : "1.4rem",
+            }}
+          >
+            {comment}
+          </Typography>
         </Box>
       </FlexBetween>
     );
@@ -315,6 +369,7 @@ const UserPost = ({ imageId, postId }) => {
                   />
                   <Tooltip title="post">
                     <IconButton
+                      type="submit"
                       sx={{
                         color: theme.palette.primary.main,
                       }}
@@ -323,11 +378,41 @@ const UserPost = ({ imageId, postId }) => {
                     </IconButton>
                   </Tooltip>
                 </FlexBetween>
+
+                {/* Add EMOJIS */}
+
+                {/* <FlexBetween>
+                  <Tooltip title="Add emojis">
+                    <IconButton
+                      onClick={handleEmojisClick}
+                      aria-describedby={id}
+                      size="small"
+                    >
+                      <EmojiEmotions />
+                    </IconButton>
+                  </Tooltip>
+                  <EmojiPoper
+                    name="comment"
+                    id={id}
+                    openEmojis={openEmojis}
+                    anchorEl={anchorEl}
+                    handleEmojisClose={handleEmojisClose}
+                  />
+                </FlexBetween> */}
               </Form>
             </FormikProvider>
             <CustDivider />
-
-            <CommentBox />
+            <Box
+              sx={{
+                width: "100%",
+                mt: "2rem",
+                ml: "1rem",
+              }}
+            >
+              {comments?.map((data) => {
+                return <CommentBox key={data.comment} {...data} />;
+              })}
+            </Box>
           </Collapse>
         </Box>
       </Box>

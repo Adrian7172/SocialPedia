@@ -38,7 +38,7 @@ const Home = () => {
         <Skeleton
           variant="rectangular"
           sx={{
-            marginTop: "2rem",
+            marginTop: "1rem",
             marginBottom: "1rem",
             maxWidth: smallScreen ? "60rem" : "100%",
             height: tabScreen ? (smallScreen ? "24rem" : "30rem") : "35rem",

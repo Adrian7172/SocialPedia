@@ -5,6 +5,7 @@ const user_profiles = require("../model/user_profiles");
 const Likes = require("../model/Likes")
 const Comments = require("../model/Comments")
 const uploadPicture = require("./uploadPicture");
+const { populate } = require("../model/Images");
 
 
 
@@ -100,11 +101,17 @@ const postLikeComment = async (req, res) => {
             return;
         }
         const id = req.params["id"];
-        const likes = await Likes.find({ parent: id, parentType: "user_posts" });
+        const likes = await Likes.find({ parent: id, parentType: "user_posts" }).populate('userId');
 
         // get comments
-        const comments = await Comments.find({ parent: id, parentType: "user_posts" });
-        console.log(likes)
+        const comments = await Comments.find({ parent: id, parentType: "user_posts" }).populate({
+            path: "userId",
+            model: "user_profiles",
+            populate: {
+                path: "profilePicture",
+                model: "Images"
+            }
+        });
 
         res.status(200).json({ likes, comments })
     } catch (error) {
@@ -155,4 +162,35 @@ const removeLikePost = async (req, res) => {
     }
 }
 
-module.exports = { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost };
+
+/* Add Comment */
+const addComment = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        const {
+            userId,
+            parentId,
+            parentType,
+            comment
+        } = req.body;
+
+        const newComment = new Comments({
+            userId: userId,
+            parent: parentId,
+            parentType: parentType,
+            comment: comment
+        })
+        const response = await newComment.save();
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+
+
+
+module.exports = { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost, addComment };

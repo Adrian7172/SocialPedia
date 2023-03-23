@@ -6,14 +6,19 @@ const CommentsSchema = new mongoose.Schema({
         ref: 'user_profiles',
         required: true
     },
+    comment: {
+        type: String,
+        required: true
+    },
     parent: {
         type: mongoose.Schema.Types.ObjectId,
         refPath: 'parentType',
         required: true
     },
     parentType: {
-        type: mongoose.Schema.Types.ObjectId,
-        enum: ["user_posts", "Comments"]
+        type: String,
+        enum: ["user_posts", "Comments"],
+        required: true
     }
 }, { timestamps: true });
 

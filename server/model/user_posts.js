@@ -31,10 +31,10 @@ const PostImageSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-const User_posts = mongoose.model("user_posts", PostSchema);
+const user_posts = mongoose.model("user_posts", PostSchema);
 const Post_images = mongoose.model("Post_images", PostImageSchema);
 
 module.exports = {
-    User_posts,
+    user_posts,
     Post_images
 };

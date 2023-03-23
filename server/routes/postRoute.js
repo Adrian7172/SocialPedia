@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost } = require("../controllers/post");
+const { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost, addComment } = require("../controllers/post");
 const verifyToken = require("../middleware/auth");
 const router = express.Router();
 
@@ -15,6 +15,7 @@ router.get("/postLikeComment/:id", verifyToken, postLikeComment);
 router.post("/post", verifyToken, upload.single("image"), storePost);
 router.post("/likePost", verifyToken, likePost);
 router.post("/removeLikePost", verifyToken, removeLikePost);
+router.post("/addComment", verifyToken, addComment);
 
 
 module.exports = router
