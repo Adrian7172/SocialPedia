@@ -1,7 +1,7 @@
 
 
 const FriendShips = require("../model/FriendShips");
-const User_profiles = require("../model/user_profiles");
+const user_profiles = require("../model/user_profiles");
 
 
 
@@ -12,7 +12,7 @@ const getAllUser = async (req, res) => {
             res.status(403).json({ message: "Please login to create a post." });
             return;
         }
-        const users = await User_profiles.find({}).populate("profilePicture");
+        const users = await user_profiles.find({}).populate("profilePicture");
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
@@ -52,7 +52,7 @@ const getSearchedUsers = async (req, res) => {
         name = name.trim();
 
 
-        const searchedUser = await User_profiles.find({
+        const searchedUser = await user_profiles.find({
             $or: [
                 { fullName: { $regex: new RegExp(name, 'i') } },
                 { bio: { $regex: new RegExp(name, 'i') } },

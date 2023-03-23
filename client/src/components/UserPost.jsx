@@ -67,14 +67,14 @@ const UserPost = ({ imageId, postId }) => {
   const verySmallScreen = useMediaQuery("(max-width: 320px)");
 
   /* GET LIKES AND COMMENTS */
-  const { data: likesAndComments, isLoading } = useGetPostLikeCommentQuery([
+  const { data: likesAndComments } = useGetPostLikeCommentQuery([
     token,
     postId?._id,
   ]);
 
   const likes = likesAndComments?.likes;
   const comments = likesAndComments?.comments;
-
+  console.log(likesAndComments)
   /* IS POST LIKED BY USER */
   const isLiked = likes?.some((data) => {
     return data.userId === currUser?._id;
@@ -112,8 +112,9 @@ const UserPost = ({ imageId, postId }) => {
   /* COMMENT BOX */
   const CommentBox = ({ user, comment }) => {
     return (
-      <FlexBetween bgcolor="red">
-        <Avatar flex={2}
+      <FlexBetween>
+        <Avatar
+          flex={2}
           src={user?.profilePicture}
           sx={{
             width: "3rem",
@@ -246,7 +247,7 @@ const UserPost = ({ imageId, postId }) => {
                   color: theme.palette.neutral.light,
                 }}
               >
-                12 comments
+                {comments?.length} comments
               </Typography>
             </ExpandMore>
             <FlexBetween>
@@ -324,8 +325,8 @@ const UserPost = ({ imageId, postId }) => {
                 </FlexBetween>
               </Form>
             </FormikProvider>
-            <CustDivider/>
-            
+            <CustDivider />
+
             <CommentBox />
           </Collapse>
         </Box>

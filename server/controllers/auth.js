@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const uploadPicture = require("./uploadPicture");
 const Images = require("../model/Images");
-const User_profiles = require("../model/user_profiles");
+const user_profiles = require("../model/user_profiles");
 
 
 /* REGISTER */
@@ -25,7 +25,7 @@ const register = async (req, res) => {
                 } = req.body;
 
                 // check if user exist
-                const user = await User_profiles.findOne({ userId: userId });
+                const user = await user_profiles.findOne({ userId: userId });
                 if (user != null) {
                         res.status(400).json({ message: "user already exist!" });
                 }
@@ -36,7 +36,7 @@ const register = async (req, res) => {
                         const fullName = `${firstName} ${lastName}`;
                         const age = getAge(dateOfBirth);
 
-                        const newUser = new User_profiles({
+                        const newUser = new user_profiles({
                                 firstName: firstName,
                                 lastName: lastName,
                                 fullName: fullName,
@@ -75,7 +75,7 @@ const login = async (req, res) => {
                         res.status(401).json({ message: "Invalid Email or phone number" })
                 }
 
-                const user = await User_profiles.findOne({ userId: userId });
+                const user = await user_profiles.findOne({ userId: userId });
                 if (!user) res.status(401).json({ message: "User doesn't exist..!" })
 
                 const isMatch = await bcrypt.compare(password, user._doc.password);

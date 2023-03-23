@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const CommentsSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User_profiles',
+        ref: 'user_profiles',
         required: true
     },
     parent: {
@@ -13,7 +13,7 @@ const CommentsSchema = new mongoose.Schema({
     },
     parentType: {
         type: mongoose.Schema.Types.ObjectId,
-        enum: ["User_posts", "Comments"]
+        enum: ["user_posts", "Comments"]
     }
 }, { timestamps: true });
 

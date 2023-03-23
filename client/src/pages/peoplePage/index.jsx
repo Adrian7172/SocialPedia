@@ -1,5 +1,11 @@
 import { useTheme } from "@emotion/react";
-import { Box, Divider, Skeleton, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Skeleton,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import PeopleCard from "components/PeopleCard";
 import Wrapper from "components/Wrapper";
 import React from "react";
@@ -13,13 +19,13 @@ const PeoplePage = () => {
   const theme = useTheme();
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const verySmallScreen = useMediaQuery("(max-width: 320px)");
-  const { data , isLoading } = useGetAllUserQuery(token);
+  
+  const { data: allUserData, isLoading } = useGetAllUserQuery(token);
 
-  const allUser = data?.filter((data) => {
+  const allUser = allUserData?.filter((data) => {
     return data?._id !== currUser?._id;
   });
 
-  // skelton
   const skelton = Array.from({ length: 10 }, (_, index) => (
     <Box
       key={index}

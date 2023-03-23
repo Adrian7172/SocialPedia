@@ -7,7 +7,7 @@ const FriendshipSchema = new mongoose.Schema({
     },
     user2: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User_profiles",
+        ref: "user_profiles",
         required: true
     },
     status: {

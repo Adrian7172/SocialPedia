@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const LikesSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User_profiles",
+        ref: "user_profiles",
         required: true
     },
     parent: {
@@ -12,7 +12,7 @@ const LikesSchema = new mongoose.Schema({
     },
     parentType: {
         type: String,
-        enum: ["User_posts", "Comments"],
+        enum: ["user_posts", "Comments"],
         required: true
     }
 }, { timestamps: true });

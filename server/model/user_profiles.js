@@ -90,6 +90,6 @@ const userProfileSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-const User_profiles = mongoose.model("User_profiles", userProfileSchema);
+const User_profiles = mongoose.model("user_profiles", userProfileSchema);
 
 module.exports = User_profiles

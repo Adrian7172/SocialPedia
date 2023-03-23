@@ -1,8 +1,9 @@
 
 const Images = require("../model/Images");
-const { User_posts, Post_images } = require("../model/user_posts");
-const User_profiles = require("../model/user_profiles");
+const { user_posts, Post_images } = require("../model/user_posts");
+const user_profiles = require("../model/user_profiles");
 const Likes = require("../model/Likes")
+const Comments = require("../model/Comments")
 const uploadPicture = require("./uploadPicture");
 
 
@@ -16,7 +17,7 @@ const storePost = async (req, res) => {
         }
 
         const picture = await uploadPicture(req, req.user.id);
-        const newPost = new User_posts({
+        const newPost = new user_posts({
             userId: userId,
             postCaption: caption,
             location: location,
@@ -46,7 +47,7 @@ const getAllPost = async (req, res) => {
             path: "postId",
             populate: {
                 path: "userId",
-                model: "User_profiles",
+                model: "user_profiles",
                 populate: {
                     path: "profilePicture",
                     model: "Images"
@@ -73,7 +74,7 @@ const getUserPost = async (req, res) => {
             path: "postId",
             populate: {
                 path: "userId",
-                model: "User_profiles",
+                model: "user_profiles",
                 populate: {
                     path: "profilePicture",
                     model: "Images"
@@ -81,7 +82,7 @@ const getUserPost = async (req, res) => {
             }
         }).populate("imageId").sort({ createdAt: -1 });
 
-        const user = await User_profiles.findById({ _id: id }).populate("profilePicture");
+        const user = await user_profiles.findById({ _id: id }).populate("profilePicture");
 
         const userPost = allPosts.filter(({ postId }) => {
             return ((postId.userId._id).toString() === id);
@@ -99,10 +100,11 @@ const postLikeComment = async (req, res) => {
             return;
         }
         const id = req.params["id"];
-        const likes = await Likes.find({ parent: id, parentType: "User_posts" });
+        const likes = await Likes.find({ parent: id, parentType: "user_posts" });
 
         // get comments
-        const comments = null
+        const comments = await Comments.find({ parent: id, parentType: "user_posts" });
+        console.log(likes)
 
         res.status(200).json({ likes, comments })
     } catch (error) {
@@ -125,7 +127,7 @@ const likePost = async (req, res) => {
         const newLike = new Likes({
             userId: userId,
             parent: postId,
-            parentType: "User_posts"
+            parentType: "user_posts"
         })
         const response = await newLike.save();
         res.status(200).json(response);
@@ -146,7 +148,7 @@ const removeLikePost = async (req, res) => {
             postId
         } = req.body;
 
-        const response = await Likes.deleteOne({ userId: userId, parent: postId, parentType: "User_posts" })
+        const response = await Likes.deleteOne({ userId: userId, parent: postId, parentType: "user_posts" })
         res.status(200).json(response);
     } catch (error) {
         res.status(500).json({ message: error.message })

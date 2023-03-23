@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const PostSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User_profiles",
+        ref: "user_profiles",
         required: true
     },
     postCaption: {
@@ -20,7 +20,7 @@ const PostSchema = new mongoose.Schema({
 const PostImageSchema = new mongoose.Schema({
     postId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User_posts",
+        ref: "user_posts",
         required: true
     },
     imageId: {
@@ -31,7 +31,7 @@ const PostImageSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-const User_posts = mongoose.model("User_posts", PostSchema);
+const User_posts = mongoose.model("user_posts", PostSchema);
 const Post_images = mongoose.model("Post_images", PostImageSchema);
 
 module.exports = {
