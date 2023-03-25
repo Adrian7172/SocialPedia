@@ -177,7 +177,8 @@ const UserPost = (post) => {
           </Typography>
           <Typography
             sx={{
-              fontSize: tabScreen ? "1.1rem" : "1.4rem",
+              fontSize: tabScreen ? "1.3rem" : "1.4rem",
+              lineHeight: "1.25rem"
             }}
           >
             {comment}
