@@ -263,7 +263,7 @@ const ProfilePage = () => {
               flexDirection={smallScreen ? "column" : "row"}
             >
               <Avatar
-                src={user?.profilePicture?.imageData}
+                src={user?.profilePicture?.url}
                 sx={{
                   width: smallScreen ? "10rem" : "14rem",
                   height: smallScreen ? "10rem" : "14rem",

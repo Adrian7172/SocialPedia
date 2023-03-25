@@ -44,14 +44,24 @@ const userProfileSchema = new mongoose.Schema({
         default: null
     },
     profilePicture: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Images",
-        default: null
+        publicId: {
+            type: String,
+            default: null
+        },
+        url: {
+            type: String,
+            default: null
+        },
     },
     coverPicture: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Images",
-        default: null
+        publicId: {
+            type: String,
+            default: null
+        },
+        url: {
+            type: String,
+            default: null
+        },
     },
     occupation: {
         type: String,

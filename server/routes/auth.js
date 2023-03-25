@@ -1,14 +1,11 @@
 const express = require("express");
-const multer = require("multer");
 const { register, login } = require("../controllers/auth");
+const singleUpload = require("../middleware/multer")
 
 const router = express.Router();
 
-// Register a new user
-const upload = multer();
-
 // Route for handling image file uploads
-router.post('/register', upload.single('picture'), register); 
+router.post('/register', singleUpload, register);
 
 /* LOGIN */
 router.post("/login", login);

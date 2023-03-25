@@ -1,8 +1,7 @@
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const uploadPicture = require("./uploadPicture");
-const Images = require("../model/Images");
+const uploadPicture = require("../utils/uploadPicture");
 const user_profiles = require("../model/user_profiles");
 
 
@@ -30,7 +29,7 @@ const register = async (req, res) => {
                         res.status(400).json({ message: "user already exist!" });
                 }
                 else {
-                        const pictureId = await uploadPicture(req, userId);
+                        const imageUrl = await uploadPicture(req.file);
                         const salt = await bcrypt.genSalt();
                         const passwordHashCode = await bcrypt.hash(password, salt);
                         const fullName = `${firstName} ${lastName}`;
@@ -45,7 +44,10 @@ const register = async (req, res) => {
                                 dateOfBirth: dateOfBirth,
                                 age: age,
                                 gender: gender,
-                                profilePicture: pictureId,
+                                profilePicture: {
+                                        url: imageUrl.secure_url,
+                                        publicId: imageUrl.public_id
+                                },
                                 bio: bio,
                                 occupation: occupation,
                                 address: {
@@ -81,14 +83,11 @@ const login = async (req, res) => {
                 const isMatch = await bcrypt.compare(password, user._doc.password);
                 if (!isMatch) res.status(401).json({ message: "Wrong password" })
                 else {
-                        let profilePic = await Images.findById({ _id: user._doc.profilePicture });
-                        user._doc.profilePicture = profilePic.imageData;
                         // //delete password
                         user._doc.password = null;
                         const token = jwt.sign({ id: user._doc.userId }, process.env.JWT_SECRET_CODE);
                         res.status(200).json({ token, user: user._doc })
                 }
-
         } catch (error) {
                 res.status(500).json({ message: error.message })
         }

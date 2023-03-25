@@ -5,6 +5,18 @@ const PostSchema = new mongoose.Schema({
         ref: "user_profiles",
         required: true
     },
+    imageData: {
+        publicId: {
+            type: String,
+            default: null,
+            required: true
+        },
+        url: {
+            type: String,
+            default: null,
+            required: true
+        }
+    },
     postCaption: {
         type: String,
         default: null
@@ -16,25 +28,8 @@ const PostSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// relationship between post and images
-const PostImageSchema = new mongoose.Schema({
-    postId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user_posts",
-        required: true
-    },
-    imageId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Images",
-        default: null
-    },
-}, { timestamps: true })
 
 
 const user_posts = mongoose.model("user_posts", PostSchema);
-const Post_images = mongoose.model("Post_images", PostImageSchema);
 
-module.exports = {
-    user_posts,
-    Post_images
-};
+module.exports = user_posts

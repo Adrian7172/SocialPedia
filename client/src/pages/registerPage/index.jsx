@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Button,
   Typography,
   useMediaQuery,
   useTheme,
@@ -133,7 +132,7 @@ const RegisterPage = () => {
             dateOfBirth: new Date(),
             gender: "",
             password: "",
-            picture: null,
+            image: null,
             bio: "",
             occupation: "",
             locality: "",
@@ -233,7 +232,7 @@ const RegisterPage = () => {
               >
                 Upload profile picture
               </Typography>
-              <ImageDropzone name="picture" />
+              <ImageDropzone name="image" />
               <FlexBetween
                 m={"2rem 0 2rem 0"}
                 width="100%"

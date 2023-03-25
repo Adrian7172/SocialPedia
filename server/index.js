@@ -1,4 +1,5 @@
 const express = require("express");
+const cloudinary = require("cloudinary").v2;
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -20,6 +21,16 @@ app.use(express.json());
 app.use(userRoute)
 app.use("/auth", authRoute);
 app.use("/user", postRoute);
+
+
+
+/* CLOUDINARY */
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 
 /* MONGODB SETUP */
 const PORT = process.env.PORT || 6001;

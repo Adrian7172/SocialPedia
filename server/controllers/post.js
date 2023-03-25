@@ -1,11 +1,9 @@
 
-const Images = require("../model/Images");
-const { user_posts, Post_images } = require("../model/user_posts");
+const user_posts = require("../model/user_posts");
 const user_profiles = require("../model/user_profiles");
 const Likes = require("../model/Likes")
 const Comments = require("../model/Comments")
-const uploadPicture = require("./uploadPicture");
-const { populate } = require("../model/Images");
+const uploadPicture = require("../utils/uploadPicture");
 
 
 
@@ -17,19 +15,17 @@ const storePost = async (req, res) => {
             return;
         }
 
-        const picture = await uploadPicture(req, req.user.id);
+        const imageUrl = await uploadPicture(req.file);
         const newPost = new user_posts({
             userId: userId,
             postCaption: caption,
             location: location,
+            imageData: {
+                publicId: imageUrl.public_id,
+                url: imageUrl.secure_url
+            }
         });
         const savedPost = await newPost.save();
-        const newPostImageRelation = new Post_images({
-            postId: savedPost._id,
-            imageId: picture,
-        });
-        await newPostImageRelation.save();
-
         res.status(201).json({ message: "Post created successfully!" });
     } catch (error) {
         res.status(500).json({ message: "Internal server error" });
@@ -44,17 +40,7 @@ const getAllPost = async (req, res) => {
             res.status(403).json({ message: "Please login to create a post." });
             return;
         }
-        const allPosts = await Post_images.find().populate({
-            path: "postId",
-            populate: {
-                path: "userId",
-                model: "user_profiles",
-                populate: {
-                    path: "profilePicture",
-                    model: "Images"
-                }
-            }
-        }).populate("imageId").sort({ createdAt: -1 });
+        const allPosts = await user_posts.find({}).populate("userId").sort({ createdAt: -1 });
 
         res.status(200).json(allPosts);
     } catch (error) {
@@ -71,23 +57,9 @@ const getUserPost = async (req, res) => {
             return;
         }
         const id = (req.params["id"]).toString();
-        const allPosts = await Post_images.find().populate({
-            path: "postId",
-            populate: {
-                path: "userId",
-                model: "user_profiles",
-                populate: {
-                    path: "profilePicture",
-                    model: "Images"
-                }
-            }
-        }).populate("imageId").sort({ createdAt: -1 });
+        const userPost = await user_posts.find({ userId: id }).populate("userId").sort({ createdAt: -1 });
 
-        const user = await user_profiles.findById({ _id: id }).populate("profilePicture");
-
-        const userPost = allPosts.filter(({ postId }) => {
-            return ((postId.userId._id).toString() === id);
-        })
+        const user = await user_profiles.findById({ _id: id });
         res.status(200).json({ userPost, user });
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -104,15 +76,7 @@ const postLikeComment = async (req, res) => {
         const likes = await Likes.find({ parent: id, parentType: "user_posts" }).populate('userId');
 
         // get comments
-        const comments = await Comments.find({ parent: id, parentType: "user_posts" }).populate({
-            path: "userId",
-            model: "user_profiles",
-            populate: {
-                path: "profilePicture",
-                model: "Images"
-            }
-        });
-
+        const comments = await Comments.find({ parent: id, parentType: "user_posts" }).populate("userId");
         res.status(200).json({ likes, comments })
     } catch (error) {
         res.status(500).json({ message: error.message })

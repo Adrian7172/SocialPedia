@@ -99,7 +99,7 @@ function Rightbar() {
               }}
             />
             <Avatar
-              src={user?.profilePicture}
+              src={user?.profilePicture?.url}
               sx={{
                 border: "0.25rem solid",
                 borderColor: theme.palette.background.default,
@@ -133,6 +133,7 @@ function Rightbar() {
               color={theme.palette.neutral.light}
               sx={{
                 my: "1rem",
+                px: "0.2rem",
                 fontSize: "1.1rem",
                 textAlign: "center",
               }}

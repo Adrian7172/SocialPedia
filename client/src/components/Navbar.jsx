@@ -213,7 +213,7 @@ const Navbar = () => {
             aria-expanded={open ? "true" : undefined}
           >
             <Avatar
-              src={user?.profilePicture}
+              src={user?.profilePicture?.url}
               sx={{ width: "3rem", height: "3rem", cursor: "pointer" }}
             />
           </IconButton>
@@ -252,8 +252,8 @@ const Navbar = () => {
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            <MenuItem onClick={()=> navigate(`/profile/${user?._id}`)}>
-              <Avatar /> My Profile
+            <MenuItem onClick={() => navigate(`/profile/${user?._id}`)}>
+              <Avatar src={user?.profilePicture?.url} /> My Profile
             </MenuItem>
             <Divider />
             <MenuItem>

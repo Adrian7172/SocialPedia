@@ -21,7 +21,7 @@ const PeopleCard = ({
   const fullName = user?.fullName;
   const bio = trucateString(user?.bio);
   const address = `${user?.address?.state}, ${user?.address?.country}`;
-  const profilePicture = user?.profilePicture?.imageData;
+  const profilePicture = user?.profilePicture?.url;
 
   
   return (

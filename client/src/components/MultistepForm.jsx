@@ -121,7 +121,7 @@ const MultistepForm = ({ children, initialValues, onSubmit, isLoading }) => {
               },
             }}
           >
-            <span>{isLastStep ? "Submit" : "Next"}</span>
+            <span>{isLastStep ? isLoading ? "" : "Submit" : "Next"}</span>
           </LoadingButton>
         </Box>
       </Form>

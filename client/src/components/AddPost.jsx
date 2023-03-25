@@ -4,7 +4,15 @@ import {
   GifBox,
   PermMedia,
 } from "@mui/icons-material";
-import { Avatar, Box, Button, IconButton, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import {
+  Avatar,
+  Box,
+  IconButton,
+  Tooltip,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { Form, FormikProvider, useFormik } from "formik";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -24,7 +32,7 @@ const AddPost = () => {
   const user = useSelector((state) => state.persistedReducer.user.userData);
   const token = useSelector((state) => state.persistedReducer.user.token);
 
-  const [userPost] = useUserPostMutation();
+  const [userPost, { isLoading }] = useUserPostMutation();
 
   /* Image Modal */
   const handleModalOpen = () => {
@@ -105,7 +113,7 @@ const AddPost = () => {
               }}
             >
               <Avatar
-                src={user?.profilePicture}
+                src={user?.profilePicture.url}
                 sx={{
                   width: "5.5rem",
                   height: "5.5rem",
@@ -220,7 +228,9 @@ const AddPost = () => {
                   />
                 </Box>
 
-                <Button
+                <LoadingButton
+                  loading={isLoading ? true : false}
+                  loadingPosition="end"
                   type="submit"
                   variant="contained"
                   size="medium"
@@ -231,8 +241,8 @@ const AddPost = () => {
                     borderRadius: "2rem",
                   }}
                 >
-                  Post
-                </Button>
+                  {isLoading ? "" : "post"}
+                </LoadingButton>
               </Box>
             </Box>
           </Wrapper>

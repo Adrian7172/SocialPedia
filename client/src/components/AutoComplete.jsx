@@ -17,7 +17,7 @@ const AutoComplete = ({ users }) => {
   if (!users) return;
 
   const renderOption = (props, option, { selected }) => {
-    const profilePicture = option?.profilePicture?.imageData;
+    const profilePicture = option?.profilePicture?.url;
     const fullName = option?.fullName;
     const bio = trucateString(option?.bio);
 
@@ -34,16 +34,15 @@ const AutoComplete = ({ users }) => {
         }}
         onClick={() => navigate(`/profile/${option?._id}`)}
       >
-        <Box display="flex">
-          <IconButton>
+        <Box display="flex" gap={2}>
             <Avatar
               src={profilePicture}
               sx={{
                 width: "4rem",
                 height: "4rem",
+                alignSelf: "flex-start"
               }}
             />
-          </IconButton>
           <Box>
             <Typography
               sx={{

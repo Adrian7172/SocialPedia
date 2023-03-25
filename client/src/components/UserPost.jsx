@@ -41,9 +41,13 @@ import { Form, FormikProvider, useFormik } from "formik";
 import CustDivider from "./CustDivider";
 import EmojiPoper from "./EmojiPoper";
 
-const UserPost = ({ imageId, postId }) => {
-  const [expanded, setExpanded] = React.useState(false);
+const UserPost = (post) => {
+  const theme = useTheme();
+  const navigate = useNavigate();
 
+
+  const [expanded, setExpanded] = React.useState(false);
+  
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -51,25 +55,25 @@ const UserPost = ({ imageId, postId }) => {
   const currUser = useSelector((state) => state.persistedReducer.user.userData);
   const token = useSelector((state) => state.persistedReducer.user.token);
 
-  // user data
-  const user = postId?.userId;
+  /* POST'S USER */
+  const user = post?.userId;
 
   //post time
-  const createdAt = new Date(postId?.createdAt);
+  const createdAt = new Date(post?.createdAt);
   const date = formatDistanceToNow(createdAt, { addSuffix: true });
 
-  const theme = useTheme();
-  const navigate = useNavigate();
 
   /*  BREAK POINTS */
   const tabScreen = useMediaQuery("(max-width:765px)");
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const verySmallScreen = useMediaQuery("(max-width: 320px)");
+
+
+
 
   /* GET LIKES AND COMMENTS */
   const { data: likesAndComments } = useGetPostLikeCommentQuery([
     token,
-    postId?._id,
+    post?._id,
   ]);
 
   const likes = likesAndComments?.likes;
@@ -89,10 +93,10 @@ const UserPost = ({ imageId, postId }) => {
       if (isLiked) {
         await removeLike([
           token,
-          { userId: currUser?._id, postId: postId?._id },
+          { userId: currUser?._id, postId: post?._id },
         ]);
       } else {
-        await likePost([token, { userId: currUser?._id, postId: postId?._id }]);
+        await likePost([token, { userId: currUser?._id, postId: post?._id }]);
       }
     } catch (error) {
       const msg = error.response.data.message
@@ -122,7 +126,7 @@ const UserPost = ({ imageId, postId }) => {
         token,
         {
           userId: currUser?._id,
-          parentId: postId?._id,
+          parentId: post?._id,
           parentType: "user_posts",
           comment: values.comment,
         },
@@ -148,7 +152,7 @@ const UserPost = ({ imageId, postId }) => {
       >
         <Avatar
           flex={2}
-          src={userId?.profilePicture?.imageData}
+          src={userId?.profilePicture?.url}
           sx={{
             width: "3rem",
             height: "3rem",
@@ -191,7 +195,7 @@ const UserPost = ({ imageId, postId }) => {
             <Box display="flex" gap={2} alignItems="center">
               <Avatar
                 onClick={() => navigate(`/profile/${user?._id}`)}
-                src={user?.profilePicture?.imageData}
+                src={user?.profilePicture?.url}
                 sx={{
                   width: "4.5rem",
                   height: "4.5rem",
@@ -240,11 +244,11 @@ const UserPost = ({ imageId, postId }) => {
                 color: theme.palette.neutral.main,
               }}
             >
-              {postId?.postCaption}
+              {post?.postCaption}
             </Typography>
           </Box>
 
-          {imageId?.imageData && (
+          {post?.imageData && (
             <Box
               sx={{
                 maxWidth: smallScreen ? "60rem" : "100%",
@@ -252,7 +256,7 @@ const UserPost = ({ imageId, postId }) => {
               }}
             >
               <Image
-                src={imageId?.imageData}
+                src={post?.imageData?.url}
                 width="100%"
                 height="100%"
                 sx={{
@@ -331,7 +335,7 @@ const UserPost = ({ imageId, postId }) => {
               <Form onSubmit={formik.handleSubmit}>
                 <FlexBetween gap={1}>
                   <Avatar
-                    src={currUser?.profilePicture}
+                    src={currUser?.profilePicture?.url}
                     sx={{
                       width: "3rem",
                       height: "3rem",
