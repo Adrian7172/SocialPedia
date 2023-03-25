@@ -76,7 +76,7 @@ function App() {
         }
         , {
           path: "/profile/:id",
-          element: <Suspense fallback={<FlexBetween flex={8} height="80vh"><CircularProgress sx={{
+          element: <Suspense fallback={<FlexBetween flex={5} height="80vh"><CircularProgress sx={{
             color: theme.palette.primary.main
           }} /></FlexBetween>}><ProtectedRoute><ProfilePage /></ProtectedRoute></Suspense>,
         }
