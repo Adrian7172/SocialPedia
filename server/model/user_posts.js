@@ -9,12 +9,10 @@ const PostSchema = new mongoose.Schema({
         publicId: {
             type: String,
             default: null,
-            required: true
         },
         url: {
             type: String,
             default: null,
-            required: true
         }
     },
     postCaption: {
