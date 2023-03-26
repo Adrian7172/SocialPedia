@@ -175,7 +175,7 @@ const CommentBox = ({ userId, comment, _id, reply = true }) => {
         >
           <Typography
             onClick={handleCommentLike}
-            component="p"
+            component="div"
             sx={{
               fontSize: tabScreen ? "1.1rem" : "1.1rem",
               color: isCommentLiked
@@ -198,7 +198,7 @@ const CommentBox = ({ userId, comment, _id, reply = true }) => {
               aria-label="show more"
             >
               <Typography
-                component="p"
+                component="div"
                 sx={{
                   fontSize: tabScreen ? "1.05rem" : "1.1rem",
                   "&:hover": {

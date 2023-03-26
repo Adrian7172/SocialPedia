@@ -69,7 +69,7 @@ export const postApi = createApi({
                 },
                 body: body[1]
             }),
-            invalidatesTags: ["getPostLikesComments"]
+            invalidatesTags: ["getPostLikesComments", "getCommentLikesComments"]
         }),
         getPostLikeComment: builder.query({
             query: (body) => ({
