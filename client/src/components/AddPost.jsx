@@ -242,7 +242,7 @@ const AddPost = () => {
                     borderRadius: "2rem",
                   }}
                 >
-                  {isLoading ? "load  " : "post"}
+                  {isLoading ? "posting...." : "post"}
                 </LoadingButton>
               </Box>
             </Box>
