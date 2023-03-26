@@ -67,7 +67,22 @@ const getUserPost = async (req, res) => {
 }
 
 /* POST'S LIKES AND COMMENTS */
-const postLikeComment = async (req, res) => {
+const postsComments = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        const id = req.params["id"];
+
+        // get comments
+        const comments = await Comments.find({ parent: id, parentType: "user_posts" }).populate("userId");
+        res.status(200).json(comments)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+const postsLikes = async (req, res) => {
     try {
         if (!req.user) {
             res.status(403).json({ message: "Please login to create a post." });
@@ -75,10 +90,7 @@ const postLikeComment = async (req, res) => {
         }
         const id = req.params["id"];
         const likes = await Likes.find({ parent: id, parentType: "user_posts" }).populate('userId');
-
-        // get comments
-        const comments = await Comments.find({ parent: id, parentType: "user_posts" }).populate("userId");
-        res.status(200).json({ likes, comments })
+        res.status(200).json(likes)
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -86,7 +98,7 @@ const postLikeComment = async (req, res) => {
 
 
 /* COMMENT'S LIKES AND COMMENTS */
-const commentLikeComment = async (req, res) => {
+const commentsLikes = async (req, res) => {
     try {
         if (!req.user) {
             res.status(403).json({ message: "Please login to create a post." });
@@ -95,9 +107,22 @@ const commentLikeComment = async (req, res) => {
         const id = req.params["id"];
         const likes = await Likes.find({ parent: id, parentType: "Comments" }).populate('userId');
 
+        res.status(200).json(likes)
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+const commentsComments = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        const id = req.params["id"];
+
         // get comments
         const comments = await Comments.find({ parent: id, parentType: "Comments" }).populate("userId");
-        res.status(200).json({ likes, comments })
+        res.status(200).json(comments)
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
@@ -181,4 +206,4 @@ const addComment = async (req, res) => {
 
 
 
-module.exports = { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost, addComment, commentLikeComment };
+module.exports = { storePost, getAllPost, getUserPost, likePost, postsComments, removeLikePost, addComment, commentsComments, postsLikes, commentsLikes };

@@ -1,5 +1,5 @@
 const express = require("express");
-const { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost, addComment, commentLikeComment } = require("../controllers/post");
+const { storePost, getAllPost, getUserPost, likePost, removeLikePost, addComment, postsComments, postsLikes, commentsComments, commentsLikes } = require("../controllers/post");
 const verifyToken = require("../middleware/auth");
 const singleUpload = require("../middleware/multer");
 const router = express.Router();
@@ -8,8 +8,10 @@ const router = express.Router();
 /* GET */
 router.get("/allposts", verifyToken, getAllPost);
 router.get("/allposts/:id", verifyToken, getUserPost);
-router.get("/postLikeComment/:id", verifyToken, postLikeComment);
-router.get("/commentLikeComment/:id", verifyToken, commentLikeComment);
+router.get("/postsComments/:id", verifyToken, postsComments);
+router.get("/postsLikes/:id", verifyToken, postsLikes);
+router.get("/commentsComments/:id", verifyToken, commentsComments);
+router.get("/commentsLikes/:id", verifyToken, commentsLikes);
 
 /* POST */
 router.post("/post", verifyToken, singleUpload, storePost);

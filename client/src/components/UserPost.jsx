@@ -27,7 +27,8 @@ import FlexBetween from "./FlexBetween";
 import { useNavigate } from "react-router-dom";
 import {
   useAddCommentMutation,
-  useGetPostLikeCommentQuery,
+  useGetPostsCommentsQuery,
+  useGetPostsLikesQuery,
   useLikePostMutation,
   useRemoveLikePostMutation,
 } from "state/api/postApi";
@@ -63,13 +64,9 @@ const UserPost = (post) => {
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   /* GET LIKES AND COMMENTS */
-  const { data: likesAndComments } = useGetPostLikeCommentQuery([
-    token,
-    post?._id,
-  ]);
-
-  const likes = likesAndComments?.likes;
-  const comments = likesAndComments?.comments;
+  /* GET COMMENT'S LIKES AND COMMENT */
+  const { data: likes } = useGetPostsLikesQuery([token, post?._id]);
+  const { data: comments } = useGetPostsCommentsQuery([token, post?._id]);
 
   /* IS POST LIKED BY USER */
   const isPostLiked = likes?.some((data) => {

@@ -15,7 +15,8 @@ import { toast } from "react-toastify";
 import FlexBetween from "./FlexBetween";
 import {
   useAddCommentMutation,
-  useGetCommentLikeCommentQuery,
+  useGetCommentsCommentsQuery,
+  useGetCommentsLikesQuery,
   useLikePostMutation,
   useRemoveLikePostMutation,
 } from "state/api/postApi";
@@ -37,13 +38,8 @@ const CommentBox = ({ userId, comment, _id, reply = true }) => {
   const token = useSelector((state) => state.persistedReducer.user.token);
 
   /* GET COMMENT'S LIKES AND COMMENT */
-  const { data: getLikeAndComment } = useGetCommentLikeCommentQuery([
-    token,
-    _id,
-  ]);
-
-  const likes = getLikeAndComment?.likes;
-  const comments = getLikeAndComment?.comments;
+  const { data: likes } = useGetCommentsLikesQuery([token, _id]);
+  const { data: comments } = useGetCommentsCommentsQuery([token, _id]);
 
   /* IS COMMENT LIKED BY USER */
   const isCommentLiked = likes?.some((data) => {
@@ -216,7 +212,7 @@ const CommentBox = ({ userId, comment, _id, reply = true }) => {
             component="p"
             sx={{
               fontSize: tabScreen ? "1.1rem" : "1.1rem",
-              color:theme.palette.neutral.main,
+              color: theme.palette.neutral.main,
               "&:hover": {
                 cursor: "pointer",
                 color: theme.palette.primary.main,
