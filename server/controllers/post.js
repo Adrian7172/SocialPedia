@@ -66,6 +66,7 @@ const getUserPost = async (req, res) => {
     }
 }
 
+/* POST'S LIKES AND COMMENTS */
 const postLikeComment = async (req, res) => {
     try {
         if (!req.user) {
@@ -83,6 +84,27 @@ const postLikeComment = async (req, res) => {
     }
 }
 
+
+/* COMMENT'S LIKES AND COMMENTS */
+const commentLikeComment = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        const id = req.params["id"];
+        const likes = await Likes.find({ parent: id, parentType: "Comments" }).populate('userId');
+
+        // get comments
+        const comments = await Comments.find({ parent: id, parentType: "Comments" }).populate("userId");
+        res.status(200).json({ likes, comments })
+    } catch (error) {
+        res.status(500).json({ message: error.message })
+    }
+}
+
+
+
 /* LIKE POST */
 const likePost = async (req, res) => {
     try {
@@ -92,13 +114,14 @@ const likePost = async (req, res) => {
         }
         const {
             userId,
-            postId
+            parentId,
+            parentType,
         } = req.body;
 
         const newLike = new Likes({
             userId: userId,
-            parent: postId,
-            parentType: "user_posts"
+            parent: parentId,
+            parentType: parentType
         })
         const response = await newLike.save();
         res.status(200).json(response);
@@ -116,10 +139,11 @@ const removeLikePost = async (req, res) => {
         }
         const {
             userId,
-            postId
+            parentId,
+            parentType
         } = req.body;
 
-        const response = await Likes.deleteOne({ userId: userId, parent: postId, parentType: "user_posts" })
+        const response = await Likes.deleteOne({ userId: userId, parent: parentId, parentType: parentType })
         res.status(200).json(response);
     } catch (error) {
         res.status(500).json({ message: error.message })
@@ -157,4 +181,4 @@ const addComment = async (req, res) => {
 
 
 
-module.exports = { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost, addComment };
+module.exports = { storePost, getAllPost, getUserPost, likePost, postLikeComment, removeLikePost, addComment, commentLikeComment };

@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { useUserPostMutation } from "state/api/postApi";
 import CustDivider from "./CustDivider";
 import EmojiPoper from "./EmojiPoper";
+import FlexBetween from "./FlexBetween";
 import ImageModal from "./ImageModal";
 import InputField from "./InputField";
 import UserImage from "./UserImage";
@@ -253,3 +254,5 @@ const AddPost = () => {
 };
 
 export default AddPost;
+
+

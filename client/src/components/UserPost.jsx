@@ -1,11 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useTheme } from "@emotion/react";
 import {
   BookmarkBorderOutlined,
   ChatBubbleOutline,
-  EmojiEmotions,
   Favorite,
-  FavoriteBorder,
   FavoriteBorderOutlined,
   MoreHoriz,
   Send,
@@ -36,18 +34,16 @@ import {
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import InputField from "./InputField";
-import AddPost from "./AddPost";
 import { Form, FormikProvider, useFormik } from "formik";
 import CustDivider from "./CustDivider";
-import EmojiPoper from "./EmojiPoper";
+import CommentBox from "./CommentBox";
 
 const UserPost = (post) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-
   const [expanded, setExpanded] = React.useState(false);
-  
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -62,13 +58,9 @@ const UserPost = (post) => {
   const createdAt = new Date(post?.createdAt);
   const date = formatDistanceToNow(createdAt, { addSuffix: true });
 
-
   /*  BREAK POINTS */
   const tabScreen = useMediaQuery("(max-width:765px)");
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-
-
 
   /* GET LIKES AND COMMENTS */
   const { data: likesAndComments } = useGetPostLikeCommentQuery([
@@ -79,24 +71,34 @@ const UserPost = (post) => {
   const likes = likesAndComments?.likes;
   const comments = likesAndComments?.comments;
 
-
   /* IS POST LIKED BY USER */
-  const isLiked = likes?.some((data) => {
+  const isPostLiked = likes?.some((data) => {
     return data.userId._id === currUser?._id;
   });
 
   /* HANDLE LIKE */
   const [likePost] = useLikePostMutation();
   const [removeLike] = useRemoveLikePostMutation();
-  async function handleLike() {
+  async function handleLikePost() {
     try {
-      if (isLiked) {
+      if (isPostLiked) {
         await removeLike([
           token,
-          { userId: currUser?._id, postId: post?._id },
+          {
+            userId: currUser?._id,
+            parentId: post?._id,
+            parentType: "user_posts",
+          },
         ]);
       } else {
-        await likePost([token, { userId: currUser?._id, postId: post?._id }]);
+        await likePost([
+          token,
+          {
+            userId: currUser?._id,
+            parentId: post?._id,
+            parentType: "user_posts",
+          },
+        ]);
       }
     } catch (error) {
       const msg = error.response.data.message
@@ -112,16 +114,14 @@ const UserPost = (post) => {
       comment: "",
     },
     onSubmit: async (values, { resetForm }) => {
-      addComments(values, resetForm);
+      addPostComment(values, resetForm);
     },
   });
 
   /* ADD COMMENT */
   const [addComment] = useAddCommentMutation();
-  async function addComments(values, resetForm) {
+  async function addPostComment(values, resetForm) {
     try {
-      // const formData = new FormData();
-      // formData.append("comment", values.comment);
       await addComment([
         token,
         {
@@ -139,54 +139,6 @@ const UserPost = (post) => {
       toast(msg);
     }
   }
-
-  /* COMMENT BOX */
-  const CommentBox = ({ userId, comment }) => {
-    return (
-      <FlexBetween
-        gap={2}
-        sx={{
-          width: "100%",
-          mb: "2rem",
-        }}
-      >
-        <Avatar
-          flex={2}
-          src={userId?.profilePicture?.url}
-          sx={{
-            width: "3rem",
-            height: "3rem",
-            alignSelf: "flex-start",
-            mt: "0.4rem",
-          }}
-        />
-        <Box
-          flex={5}
-          sx={{
-            wordWrap: "break-word",
-            width: "10rem",
-            overflowWrap: "break-word",
-          }}
-        >
-          <Typography
-            sx={{
-              fontWeight: "600",
-            }}
-          >
-            {userId?.fullName}
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: tabScreen ? "1.3rem" : "1.4rem",
-              lineHeight: "1.25rem"
-            }}
-          >
-            {comment}
-          </Typography>
-        </Box>
-      </FlexBetween>
-    );
-  };
 
   return (
     <Wrapper width="100%">
@@ -273,8 +225,11 @@ const UserPost = (post) => {
             }}
           >
             <FlexBetween>
-              <IconButton aria-label="add to favorites" onClick={handleLike}>
-                {isLiked ? (
+              <IconButton
+                aria-label="add to favorites"
+                onClick={handleLikePost}
+              >
+                {isPostLiked ? (
                   <Favorite sx={{ color: "red" }} />
                 ) : (
                   <FavoriteBorderOutlined />
@@ -296,7 +251,7 @@ const UserPost = (post) => {
               aria-expanded={expanded}
               aria-label="show more"
             >
-              <IconButton aria-label="add to favorites">
+              <IconButton>
                 <ChatBubbleOutline />
               </IconButton>
               <Typography
@@ -310,7 +265,7 @@ const UserPost = (post) => {
               </Typography>
             </ExpandMore>
             <FlexBetween>
-              <IconButton aria-label="add to favorites">
+              <IconButton>
                 <Share />
               </IconButton>
               <Typography
@@ -349,6 +304,9 @@ const UserPost = (post) => {
                     multiline
                     rows={0}
                     placeholder="Add Comment"
+                    InputProps={{
+                      style: { fontSize: tabScreen ? "1.35rem" : "1.45rem" },
+                    }}
                     sx={{
                       width: "100%",
                       bgcolor: theme.palette.secondary.light,

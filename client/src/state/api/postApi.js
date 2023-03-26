@@ -47,7 +47,7 @@ export const postApi = createApi({
                 },
                 body: body[1]
             }),
-            invalidatesTags: ["getPostLikesComments"]
+            invalidatesTags: ["getPostLikesComments", "getCommentLikesComments"]
         }),
         removeLikePost: builder.mutation({
             query: (body) => ({
@@ -58,7 +58,7 @@ export const postApi = createApi({
                 },
                 body: body[1]
             }),
-            invalidatesTags: ["getPostLikesComments"]
+            invalidatesTags: ["getPostLikesComments", "getCommentLikesComments"]
         }),
         addComment: builder.mutation({
             query: (body) => ({
@@ -81,8 +81,18 @@ export const postApi = createApi({
             }),
             providesTags: ["getPostLikesComments"]
         }),
+        getCommentLikeComment: builder.query({
+            query: (body) => ({
+                url: `user/commentLikeComment/${body[1]}`,
+                method: "GET",
+                headers: {
+                    authorization: body[0]
+                }
+            }),
+            providesTags: ["getCommentLikesComments"]
+        }),
     })
 })
 
 
-export const { useUserPostMutation, useGetAllPostQuery, useGetUserPostQuery, useLikePostMutation, useGetPostLikeCommentQuery, useRemoveLikePostMutation, useAddCommentMutation } = postApi
+export const { useUserPostMutation, useGetAllPostQuery, useGetUserPostQuery, useLikePostMutation, useGetPostLikeCommentQuery, useRemoveLikePostMutation, useAddCommentMutation, useGetCommentLikeCommentQuery } = postApi
