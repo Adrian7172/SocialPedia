@@ -205,5 +205,29 @@ const addComment = async (req, res) => {
 
 
 
+/* get likes */
+const getUserLikes = async (req, res) => {
+    try {
+        if (!req.user) {
+            res.status(403).json({ message: "Please login to create a post." });
+            return;
+        }
+        let userId = req.params["id"];
+        const LikedPosts = await Likes.find({ userId: userId, parentType: "user_posts" }).populate({
+            path: "parent",
+            populate: {
+                path: "userId",
+                model: "user_profiles"
+            }
+        }).sort({ createdAt: -1 });
 
-module.exports = { storePost, getAllPost, getUserPost, likePost, postsComments, removeLikePost, addComment, commentsComments, postsLikes, commentsLikes };
+        res.status(200).json(LikedPosts);
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+
+
+
+module.exports = { storePost, getAllPost, getUserPost, likePost, postsComments, removeLikePost, addComment, commentsComments, postsLikes, commentsLikes, getUserLikes };

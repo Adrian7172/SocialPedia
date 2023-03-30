@@ -8,6 +8,7 @@ router.get("/allusers", verifyToken, getAllUser);
 router.get("/allFriends/:id", verifyToken, getAllFriends);
 router.get("/search/:name", verifyToken, getSearchedUsers);
 
+
 /* POST */
 router.post("/addFriend", verifyToken, addFriend);
 

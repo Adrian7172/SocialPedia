@@ -76,6 +76,7 @@ export const userApi = createApi({
             }),
             invalidatesTags: ["getAllFriends"]
         }),
+      
     })
 })
 

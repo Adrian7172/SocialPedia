@@ -2,6 +2,7 @@
 
 const FriendShips = require("../model/FriendShips");
 const user_profiles = require("../model/user_profiles");
+const Likes = require("../model/Likes");
 
 
 
@@ -149,6 +150,7 @@ const acceptRequest = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
+
 
 
 

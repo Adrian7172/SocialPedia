@@ -23,6 +23,7 @@ import PeoplePage from "pages/peoplePage";
 import FriendsPage from "pages/friendsPage";
 import SearchResult from "components/SearchResult";
 import FlexBetween from "components/FlexBetween";
+import LikesPage from "pages/LikesPage";
 
 const ProfilePage = React.lazy(() => import("pages/profilePage"))
 
@@ -73,6 +74,10 @@ function App() {
         , {
           path: "/friends",
           element: <ProtectedRoute><FriendsPage /></ProtectedRoute>,
+        }
+        , {
+          path: "/likes",
+          element: <ProtectedRoute><LikesPage /></ProtectedRoute>,
         }
         , {
           path: "/profile/:id",
